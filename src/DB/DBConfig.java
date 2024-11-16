@@ -288,8 +288,8 @@ public class DBConfig {
             stmt = conn.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS profesor_curso (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "id_profesor INT NOT NULL, " +
-                    "id_curso INT NOT NULL, " +
+                    "profesor_id INT NOT NULL, " +
+                    "curso_id INT NOT NULL, " +
                     "semestre VARCHAR(50) NOT NULL, " +
                     "anio INT NOT NULL, " +
                     "FOREIGN KEY (id_profesor) REFERENCES profesor(id), " +

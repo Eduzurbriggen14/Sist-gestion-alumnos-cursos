@@ -13,13 +13,12 @@ public class InscripcionDAO implements IInscripcionDAO {
     private AlumnoDAO alu;
     private CursoDAO c;
 
-    // Constructor donde se inicializa la conexión
+
     public InscripcionDAO() {
         try {
-            // Inicializa la conexión con la base de datos
-            String url = "jdbc:mysql://localhost:3306/tp_java"; // Reemplaza con la URL de tu DB
-            String user = "root"; // Reemplaza con tu usuario de DB
-            String password = "Zurdo123"; // Reemplaza con tu contraseña de DB
+            String url = "jdbc:mysql://localhost:3306/tp_java";
+            String user = "root";
+            String password = "Zurdo123";
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -28,9 +27,9 @@ public class InscripcionDAO implements IInscripcionDAO {
 
     @Override
     public void insertar(Inscripcion inscripcion) {
-        // Obtiene los idAlumno y idCurso a partir de los nombres
         int idAlumno = obtenerIdAlumno(inscripcion.getNombreUsuario());
         int idCurso = obtenerIdCurso(inscripcion.getNombreCurso());
+
         System.out.println("ID Alumno: " + idAlumno);
         System.out.println("ID Curso: " + idCurso);
         if (idAlumno == -1 || idCurso == -1) {
@@ -38,11 +37,10 @@ public class InscripcionDAO implements IInscripcionDAO {
             return;
         }
 
-        // Inserta en la base de datos utilizando los idAlumno y idCurso
         String sql = "INSERT INTO inscripciones (alumno_id, curso_id, calificacion) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idAlumno);  // ID del alumno
-            stmt.setInt(2, idCurso);   // ID del curso
+            stmt.setInt(1, idAlumno);
+            stmt.setInt(2, idCurso);
             stmt.setDouble(3, inscripcion.getCalificacionFinal());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -64,8 +62,8 @@ public class InscripcionDAO implements IInscripcionDAO {
         String sql = "UPDATE inscripciones SET calificacion = ? WHERE alumno_id = ? AND curso_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDouble(1, inscripcion.getCalificacionFinal());
-            stmt.setInt(2, idAlumno);  // ID del alumno
-            stmt.setInt(3, idCurso);   // ID del curso
+            stmt.setInt(2, idAlumno);
+            stmt.setInt(3, idCurso);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,8 +82,8 @@ public class InscripcionDAO implements IInscripcionDAO {
 
         String sql = "SELECT * FROM inscripciones WHERE alumno_id = ? AND curso_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idAlumno);  // ID del alumno
-            stmt.setInt(2, idCurso);   // ID del curso
+            stmt.setInt(1, idAlumno);
+            stmt.setInt(2, idCurso);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Inscripcion(
@@ -162,7 +160,7 @@ public class InscripcionDAO implements IInscripcionDAO {
                 inscripciones.add(new Inscripcion(
                         nUsuario,
                         nCurso,
-                        rs.getDouble("calificacionFinal")
+                        rs.getDouble("calificacion")
                 ));
             }
         } catch (SQLException | DAOException e) {

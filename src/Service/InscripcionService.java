@@ -11,7 +11,6 @@ public class InscripcionService {
     private AlumnoDAO alumnoDAO;
     private CursoDAO cursoDAO;
 
-    // Constructor con validación para asegurarse de que los DAOs no sean null
     public InscripcionService(InscripcionDAO inscripcionDAO, AlumnoDAO alumnoDAO, CursoDAO cursoDAO) {
         if (inscripcionDAO == null || alumnoDAO == null || cursoDAO == null) {
             throw new IllegalArgumentException("Los DAOs no pueden ser null");

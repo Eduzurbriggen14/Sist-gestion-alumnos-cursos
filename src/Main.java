@@ -3,10 +3,6 @@ import DB.DBConfig;
 
 import Entidades.Curso;
 import GUI.*;
-import com.mysql.cj.log.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws DAOException {
@@ -17,6 +13,8 @@ public class Main {
 
 
         Login log = new Login();
+
+
 
     }
 }

@@ -162,7 +162,7 @@ public class RegistroUsuario extends JFrame {
                         JOptionPane.showMessageDialog(null, "Tipo de usuario no válido.");
                         break;
                 }
-                new AdminPanel();
+                new Login();
                 dispose();
             }
         });
@@ -170,7 +170,7 @@ public class RegistroUsuario extends JFrame {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AdminPanel();
+                new Login();
                 dispose();
             }
         });

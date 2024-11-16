@@ -1,5 +1,6 @@
 package GUI;
 
+import DAO.ReporteDAO;
 import Entidades.Alumno;
 import Entidades.Profesor;
 import Service.AlumnoService;
@@ -11,12 +12,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
 public class AdminPanel extends JFrame {
     private JButton crearUsuario;
     private JButton crearCurso;
     private JButton editarCurso;
-    private JButton generarReporte;
+    private JButton reporteCursos; // Botón para el reporte de cursos
     private JButton verAlumnos;
     private JButton verProfesores;
     private Connection conexion;
@@ -53,9 +55,10 @@ public class AdminPanel extends JFrame {
         editarCurso.setBounds(10, 140, 150, 25);
         panel.add(editarCurso);
 
-        generarReporte = new JButton("Generar Reportes");
-        generarReporte.setBounds(10, 200, 150, 25);
-        panel.add(generarReporte);
+        // Nuevo botón para reporte de cursos
+        reporteCursos = new JButton("Reporte de Cursos");
+        reporteCursos.setBounds(10, 200, 150, 25);
+        panel.add(reporteCursos);
 
         verAlumnos = new JButton("Ver Alumnos");
         verAlumnos.setBounds(10, 260, 150, 25);
@@ -64,6 +67,23 @@ public class AdminPanel extends JFrame {
         verProfesores = new JButton("Ver Profesores");
         verProfesores.setBounds(10, 320, 150, 25);
         panel.add(verProfesores);
+
+        reporteCursos.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ReporteDAO reporteDAO = new ReporteDAO();
+                List<Map<String, Object>> listaReporte = reporteDAO.obtenerReporteCursos();
+
+                // Verificar si los datos no son nulos ni vacíos
+                if (listaReporte == null || listaReporte.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "No se encontraron datos para mostrar el reporte.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Mostrar el reporte
+                ReportePanel.mostrarReporteEnVentana(listaReporte);
+            }
+        });
 
         crearUsuario.addActionListener(new ActionListener() {
             @Override
@@ -86,13 +106,6 @@ public class AdminPanel extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 new EditarDatosCurso();
                 dispose();
-            }
-        });
-
-        generarReporte.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Funcionalidad de reportes aún no implementada.");
             }
         });
 

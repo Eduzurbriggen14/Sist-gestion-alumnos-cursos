@@ -49,6 +49,6 @@ public abstract class Usuario {
 
     @Override
     public String toString() {
-        return "Alumno = "+ this.nombre;
+        return this.nombre;
     }
 }
