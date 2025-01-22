@@ -13,7 +13,7 @@ public class ReportePanel extends JPanel {
 
         // Crear un panel para las tablas
         JPanel panelTablas = new JPanel();
-        panelTablas.setLayout(new BoxLayout(panelTablas, BoxLayout.Y_AXIS)); // Una tabla debajo de otra
+        panelTablas.setLayout(new BoxLayout(panelTablas, BoxLayout.Y_AXIS));
 
         double totalGeneralRecaudado = 0;
 
@@ -30,18 +30,15 @@ public class ReportePanel extends JPanel {
 
             // Si el curso cambia o es el primer curso
             if (!curso.equals(cursoActual)) {
-                // Si ya se estaba procesando un curso, agregarlo al panel
                 if (modeloTabla != null) {
                     agregarTablaAlPanel(panelTablas, cursoActual, modeloTabla, totalCursoRecaudado);
                 }
-
-                // Crear nueva tabla para el nuevo curso
                 modeloTabla = new DefaultTableModel(
                         new Object[]{"Alumno", "Precio por Alumno"}, 0
                 );
 
                 cursoActual = curso;
-                totalCursoRecaudado = 0; // Reiniciar el total del curso
+                totalCursoRecaudado = 0;
             }
 
             // Solo agregar filas si hay inscripciones
@@ -60,11 +57,25 @@ public class ReportePanel extends JPanel {
         // Agregar el panel de tablas al panel principal
         add(new JScrollPane(panelTablas), BorderLayout.CENTER);
 
+        JPanel panelInferior = new JPanel();
+        panelInferior.setLayout(new BorderLayout());
+
         // Mostrar el total general recaudado
         JLabel lblTotalGeneral = new JLabel("Total General Recaudado: $" + totalGeneralRecaudado);
         lblTotalGeneral.setHorizontalAlignment(SwingConstants.CENTER);
         lblTotalGeneral.setFont(new Font("Arial", Font.BOLD, 14));
-        add(lblTotalGeneral, BorderLayout.SOUTH);
+        add(lblTotalGeneral, BorderLayout.NORTH);
+
+        JButton btnVerGrafico = new JButton("Ver gráfico");
+        btnVerGrafico.addActionListener(e -> {
+            // Aquí llamamos al método para mostrar el gráfico
+            mostrarGrafico();
+        });
+        panelInferior.add(btnVerGrafico, BorderLayout.SOUTH);
+
+        add(panelInferior, BorderLayout.SOUTH);
+
+
     }
 
     private void agregarTablaAlPanel(JPanel panelTablas, String curso, DefaultTableModel modeloTabla, double totalCursoRecaudado) {
@@ -75,9 +86,9 @@ public class ReportePanel extends JPanel {
         JTable tablaCurso = new JTable(modeloTabla);
 
         // Ajustar la altura de la tabla según la cantidad de filas
-        tablaCurso.setRowHeight(30);  // Altura por defecto de cada fila
+        tablaCurso.setRowHeight(30);
         int filaCount = modeloTabla.getRowCount();
-        tablaCurso.setPreferredScrollableViewportSize(new Dimension(600, 30 * filaCount));  // Ajustar altura total
+        tablaCurso.setPreferredScrollableViewportSize(new Dimension(600, 30 * filaCount));
         JScrollPane scrollTabla = new JScrollPane(tablaCurso);
 
         JLabel totalCurso = new JLabel("Total Recaudado para " + curso + ": $" + totalCursoRecaudado);
@@ -95,7 +106,6 @@ public class ReportePanel extends JPanel {
         // Agregar el panel del curso al panel de tablas
         panelTablas.add(panelCurso);
     }
-
     // Método estático para mostrar el reporte en una ventana JFrame
     public static void mostrarReporteEnVentana(List<Map<String, Object>> reporteDatos) {
         JFrame frameReporte = new JFrame("Reporte de Cursos");
@@ -103,5 +113,13 @@ public class ReportePanel extends JPanel {
         frameReporte.setSize(800, 600);
         frameReporte.add(new ReportePanel(reporteDatos));
         frameReporte.setVisible(true);
+    }
+
+    private void mostrarGrafico() {
+        JFrame frameGrafico = new JFrame("Gráfico de Barras");
+        frameGrafico.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frameGrafico.setSize(800, 600);
+        frameGrafico.add(new GraficoReporte());
+        frameGrafico.setVisible(true);
     }
 }
