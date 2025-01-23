@@ -80,9 +80,7 @@ public class ListarCursos extends JFrame {
             row[1] = curso.getDescripcionCurso();
             row[2] = curso.getCupo();
             row[3] = curso.getPrecioCurso();
-            row[4] = curso.getSemestre().name();
-            row[5] = curso.getAnio();
-            row[6] = "Inscribirse"; // Texto del botón en la tabla
+            row[4] = "Inscribirse"; // Texto del botón en la tabla
 
             model.addRow(row);
         }

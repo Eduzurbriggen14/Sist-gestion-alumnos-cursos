@@ -27,8 +27,8 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
 
     @Override
     public void inscribirAlumno(Alumno alumno, Curso curso) throws DAOException{
-        Connection connection = null; // Declarar la conexión
-        PreparedStatement stmt = null; // Declarar el statement para ejecutar consultas
+        Connection connection = null;
+        PreparedStatement stmt = null;
 
         try {
             // Obtener la conexión a la base de datos

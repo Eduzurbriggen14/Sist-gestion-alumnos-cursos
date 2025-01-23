@@ -1,5 +1,6 @@
 package GUI;
 
+import DAO.DAOException;
 import DAO.ReporteDAO;
 import Entidades.Alumno;
 import Entidades.Profesor;
@@ -21,6 +22,8 @@ public class AdminPanel extends JFrame {
     private JButton reporteCursos; // Botón para el reporte de cursos
     private JButton verAlumnos;
     private JButton verProfesores;
+    private JButton asignarProfesorCurso;
+    private JButton listadosCursosPorProfesor;
     private Connection conexion;
     private AlumnoService alu;
     private ProfesorService prof;
@@ -67,6 +70,14 @@ public class AdminPanel extends JFrame {
         verProfesores = new JButton("Ver Profesores");
         verProfesores.setBounds(10, 320, 150, 25);
         panel.add(verProfesores);
+
+        asignarProfesorCurso = new JButton("Asignar Profesor a Curso");
+        asignarProfesorCurso.setBounds(10, 380, 200, 25); // Ajusta la posición y tamaño
+        panel.add(asignarProfesorCurso);
+
+        listadosCursosPorProfesor = new JButton("Listado de Cursos por Profesor");
+        listadosCursosPorProfesor.setBounds(10, 440, 250, 25); // Ajusta la posición y tamaño
+        panel.add(listadosCursosPorProfesor);
 
         reporteCursos.addActionListener(new ActionListener() {
             @Override
@@ -139,6 +150,29 @@ public class AdminPanel extends JFrame {
                 String eleccion = "Profesor";
                 TablaUsuario t = new TablaUsuario(profesores, eleccion);
                 t.setVisible(true);
+                dispose();
+            }
+        });
+
+        asignarProfesorCurso.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AsignarProfesorCurso asignarProfesorCurso = null;
+                try {
+                    asignarProfesorCurso = new AsignarProfesorCurso();
+                } catch (DAOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ServiceException ex) {
+                    throw new RuntimeException(ex);
+                }
+                asignarProfesorCurso.setVisible(true);
+                dispose();
+            }
+        });
+
+        listadosCursosPorProfesor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });

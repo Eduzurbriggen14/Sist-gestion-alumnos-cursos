@@ -70,7 +70,7 @@ public class RegistroCurso extends JFrame {
         precioCursoField.setBounds(170, 140, 200, 25);
         panel.add(precioCursoField);
 
-        JLabel semestreLabel = new JLabel("Semestre:");
+        /*JLabel semestreLabel = new JLabel("Semestre:");
         semestreLabel.setBounds(10, 180, 150, 25);
         panel.add(semestreLabel);
 
@@ -86,7 +86,7 @@ public class RegistroCurso extends JFrame {
 
         anioField = new JTextField(4);
         anioField.setBounds(170, 220, 200, 25);
-        panel.add(anioField);
+        panel.add(anioField);*/
 
         registrarButton = new JButton("Registrar");
         registrarButton.setBounds(10, 260, 150, 25);
@@ -105,16 +105,16 @@ public class RegistroCurso extends JFrame {
                 String descripcionCurso = descripcionCursoField.getText().trim();
                 String cupoStr = cupoField.getText().trim();
                 String precioCursoStr = precioCursoField.getText().trim();
-                String anioStr = anioField.getText().trim(); // Obtener el valor del año
+                //String anioStr = anioField.getText().trim(); // Obtener el valor del año
 
-                if (nombreCurso.isEmpty() || descripcionCurso.isEmpty() || cupoStr.isEmpty() || precioCursoStr.isEmpty() || anioStr.isEmpty()) {
+                if (nombreCurso.isEmpty() || descripcionCurso.isEmpty() || cupoStr.isEmpty() || precioCursoStr.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 int cupo;
                 double precioCurso;
-                int anio;
+                //int anio;
 
                 try {
                     cupo = Integer.parseInt(cupoStr);
@@ -138,7 +138,7 @@ public class RegistroCurso extends JFrame {
                     return;
                 }
 
-                try {
+               /* try {
                     anio = Integer.parseInt(anioStr);
                     if (anio < 2000 || anio > 2100) { // Validar año razonable
                         JOptionPane.showMessageDialog(null, "Por favor, ingrese un año entre 2000 y 2100.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -147,18 +147,18 @@ public class RegistroCurso extends JFrame {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "El año debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
-                }
+                }*/
 
-                String semestreSeleccionado = (String) semestreComboBox.getSelectedItem();
+                /*String semestreSeleccionado = (String) semestreComboBox.getSelectedItem();
                 Semestre semestre = null;
 
                 if ("A-Marzo/Julio".equals(semestreSeleccionado)) {
                     semestre = Semestre.SEMESTRE_A;
                 } else if ("B-Agosto/Noviembre".equals(semestreSeleccionado)) {
                     semestre = Semestre.SEMESTRE_B;
-                }
+                }*/
 
-                Curso nuevoCurso = new Curso(nombreCurso, descripcionCurso, cupo, precioCurso, semestre, anio);
+                Curso nuevoCurso = new Curso(nombreCurso, descripcionCurso, cupo, precioCurso);
 
                 cursoService.guardarCurso(nuevoCurso);
 

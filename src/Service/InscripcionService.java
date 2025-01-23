@@ -21,7 +21,7 @@ public class InscripcionService {
     }
 
     // Método para inscribir a un alumno en un curso
-    public boolean inscribirAlumnoEnCurso(String nombreUsuario, String nombreCurso, double calificacionFinal) throws DAOException {
+    public boolean inscribirAlumnoEnCurso(String nombreUsuario, String nombreCurso, int anio) throws DAOException {
         try {
             if (!puedeInscribirseEnCurso(nombreUsuario, nombreCurso)) {
                 return false;
@@ -31,7 +31,7 @@ public class InscripcionService {
             throw new RuntimeException(e);
         }
 
-        Inscripcion inscripcion = new Inscripcion(nombreUsuario, nombreCurso, calificacionFinal);
+        Inscripcion inscripcion = new Inscripcion(nombreUsuario, nombreCurso, anio);
         System.out.println(inscripcion.getNombreCurso());
         inscripcionDAO.insertar(inscripcion);
         return true;
@@ -41,7 +41,7 @@ public class InscripcionService {
     public boolean puedeInscribirseEnCurso(String nombreUsuario, String nombreCurso) throws DAOException {
         // Obtener el alumno
         Alumno alumno = alumnoDAO.recuperar(nombreUsuario);
-        System.out.println("alumno en puede inscribirse???"+alumno);
+
 
         // Si el alumno no existe, no puede inscribirse
         if (alumno == null) {
@@ -62,7 +62,7 @@ public class InscripcionService {
             System.out.println("El alumno ha alcanzado el límite de cursos.");
             return false;
         }
-        System.out.println("El alumno no cumple con los requisitos de inscripción.");
+        System.out.println("El alumno cumple con los requisitos de inscripción.");
         return true;
     }
 
@@ -79,12 +79,4 @@ public class InscripcionService {
         return inscripcionDAO.obtenerTodos();
     }
 
-    // Método para generar reporte de inscripciones
-    public void generarReporteInscripciones() {
-        List<Inscripcion> inscripciones = obtenerTodasLasInscripciones();
-        System.out.println("Reporte de Inscripciones:");
-        for (Inscripcion inscripcion : inscripciones) {
-            System.out.println("Alumno: " + inscripcion.getNombreUsuario() + ", Curso: " + inscripcion.getNombreCurso() + ", Calificación Final: " + inscripcion.getCalificacionFinal() + ", Aprobado: " + (inscripcion.isAprobado() ? "Sí" : "No"));
-        }
-    }
 }

@@ -100,6 +100,7 @@ public class ProfesorDAO implements IProfesor{
                         rs.getString("nombreUsuario"),
                         rs.getString("correo"),
                         TipoUsuario.valueOf(rs.getString("tipoUsuario")));
+                profesor.setId(rs.getInt("id"));
             }
 
         } catch (SQLException e) {

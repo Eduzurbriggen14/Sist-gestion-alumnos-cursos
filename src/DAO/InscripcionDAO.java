@@ -37,11 +37,11 @@ public class InscripcionDAO implements IInscripcionDAO {
             return;
         }
 
-        String sql = "INSERT INTO inscripciones (alumno_id, curso_id, calificacion) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO inscripciones (alumno_id, curso_id, anio) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, idAlumno);
             stmt.setInt(2, idCurso);
-            stmt.setDouble(3, inscripcion.getCalificacionFinal());
+            stmt.setInt(3, inscripcion.getAnio());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,9 +59,9 @@ public class InscripcionDAO implements IInscripcionDAO {
             return;
         }
 
-        String sql = "UPDATE inscripciones SET calificacion = ? WHERE alumno_id = ? AND curso_id = ?";
+        String sql = "UPDATE inscripciones SET anio = ? WHERE alumno_id = ? AND curso_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setDouble(1, inscripcion.getCalificacionFinal());
+            stmt.setInt(1, inscripcion.getAnio());
             stmt.setInt(2, idAlumno);
             stmt.setInt(3, idCurso);
             stmt.executeUpdate();
@@ -87,9 +87,9 @@ public class InscripcionDAO implements IInscripcionDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Inscripcion(
-                        rs.getString("nombreUsuario"),
-                        rs.getString("nombreCurso"),
-                        rs.getDouble("calificacion")
+                        nombreUsuario,
+                        nombreCurso,
+                        rs.getInt("anio")
                 );
             }
         } catch (SQLException e) {
@@ -123,7 +123,7 @@ public class InscripcionDAO implements IInscripcionDAO {
                 inscripciones.add(new Inscripcion(
                         nUsuario,
                         nombreCurso,
-                        rs.getDouble("calificacion")
+                        rs.getInt("anio")
                 ));
             }
         } catch (SQLException e) {
@@ -160,7 +160,7 @@ public class InscripcionDAO implements IInscripcionDAO {
                 inscripciones.add(new Inscripcion(
                         nUsuario,
                         nCurso,
-                        rs.getDouble("calificacion")
+                        rs.getInt("anio")
                 ));
             }
         } catch (SQLException | DAOException e) {
@@ -193,7 +193,7 @@ public class InscripcionDAO implements IInscripcionDAO {
                 inscripciones.add(new Inscripcion(
                         nombreUsuario,
                         nombreCurso,
-                        calificacion
+                        rs.getInt("anio")
                 ));
             }
         } catch (SQLException e) {

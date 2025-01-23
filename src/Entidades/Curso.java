@@ -9,24 +9,24 @@ public class Curso {
     private String descripcionCurso;
     private int cupo;
     private double precioCurso;
-    private int anio;
     private double notaAprobacion;
     private Promocion promocionCurso;
-    private Semestre semestre;
     private Map<Alumno, Double> calificaciones;
 
-    public Curso(String nombreCurso, String descripcionCurso, int cupo, double precioCurso, Semestre semestre, int anio) {
+    public Curso(String nombreCurso, String descripcionCurso, int cupo, double precioCurso) {
         this.nombreCurso = nombreCurso;
         this.descripcionCurso = descripcionCurso;
         this.cupo = cupo;
         this.precioCurso = precioCurso;
-        this.semestre = semestre;
-        this.anio = anio;
         this.promocionCurso = null;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Curso(String nombreCurso) {
@@ -63,22 +63,6 @@ public class Curso {
 
     public void setPrecioCurso(double precioCurso) {
         this.precioCurso = precioCurso;
-    }
-
-    public Semestre getSemestre() {
-        return semestre;
-    }
-
-    public void setSemestre(Semestre semestre) {
-        this.semestre = semestre;
-    }
-
-    public int getAnio() {
-        return anio;
-    }
-
-    public void setAnio(int anio) {
-        this.anio = anio;
     }
 
     public double getNotaAprobacion() {

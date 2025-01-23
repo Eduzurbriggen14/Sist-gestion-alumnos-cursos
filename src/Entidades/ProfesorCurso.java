@@ -4,13 +4,11 @@ public class ProfesorCurso {
 
     private Profesor profesor;
     private Curso curso;
-    private Semestre semestre;
     private int anio;
 
-    public ProfesorCurso(Profesor profesor, Curso curso, Semestre semestre, int anio) {
+    public ProfesorCurso(Profesor profesor, Curso curso, int anio) {
         this.profesor = profesor;
         this.curso = curso;
-        this.semestre = semestre;
         this.anio = anio;
     }
 
@@ -28,14 +26,6 @@ public class ProfesorCurso {
 
     public void setCurso(Curso curso) {
         this.curso = curso;
-    }
-
-    public Semestre getSemestre() {
-        return semestre;
-    }
-
-    public void setSemestre(Semestre semestre) {
-        this.semestre = semestre;
     }
 
     public int getAnio() {

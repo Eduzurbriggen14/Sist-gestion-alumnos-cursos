@@ -3,13 +3,13 @@ package Entidades;
 public class Inscripcion {
     private String nombreUsuario;
     private String nombreCurso;
-    private double calificacionFinal;
+    private int anio;
 
     // Constructor, getters y setters
-    public Inscripcion(String nombreUsuario, String nombreCurso, double calificacionFinal) {
+    public Inscripcion(String nombreUsuario, String nombreCurso, int anio) {
         this.nombreUsuario = nombreUsuario;
         this.nombreCurso = nombreCurso;
-        this.calificacionFinal = calificacionFinal;
+        this.anio = anio;
     }
 
     // Getters y setters
@@ -20,12 +20,6 @@ public class Inscripcion {
     public String getNombreCurso() {
         return nombreCurso;
     }
-
-    public double getCalificacionFinal() {
-        return calificacionFinal;
-    }
-
-
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
@@ -34,15 +28,11 @@ public class Inscripcion {
         this.nombreCurso = nombreCurso;
     }
 
-    public void setCalificacionFinal(double calificacionFinal) {
-        this.calificacionFinal = calificacionFinal;
+    public int getAnio() {
+        return anio;
     }
 
-    public boolean isAprobado() {
-        if(calificacionFinal >=6){
-            return true;
-        }else{
-            return false;
-        }
+    public void setAnio(int anio) {
+        this.anio = anio;
     }
 }

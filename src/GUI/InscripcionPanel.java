@@ -8,15 +8,12 @@ import Entidades.Alumno;
 import Entidades.Curso;
 import Entidades.Inscripcion;
 import Service.InscripcionService;
-import Service.ReporteService;
-import Service.ServiceException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Map;
 
 public class InscripcionPanel extends JFrame {
 
@@ -43,7 +40,6 @@ public class InscripcionPanel extends JFrame {
         panel.add(crearInscripcionPanel());
         panel.add(crearInscripcionesPorAlumnoPanel());
         panel.add(crearInscripcionesPorCursoPanel());
-        //panel.add(crearGenerarReportePanel());
         panel.add(crearVolverPanel());
 
         add(panel);
@@ -51,7 +47,7 @@ public class InscripcionPanel extends JFrame {
 
     private JPanel crearInscripcionPanel() throws DAOException {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2));
+        panel.setLayout(new GridLayout(5, 2));
 
         List<Alumno> alumnos = alumnoDAO.recuperarTodos();
         List<Curso> cursos = cursoDAO.recuperarTodos();
@@ -59,8 +55,8 @@ public class InscripcionPanel extends JFrame {
         JComboBox<Alumno> comboAlumnos = new JComboBox<>(alumnos.toArray(new Alumno[0]));
         JComboBox<Curso> comboCursos = new JComboBox<>(cursos.toArray(new Curso[0]));
 
-        JLabel labelCalificacion = new JLabel("Calificación final:");
-        JTextField textCalificacion = new JTextField("0", 5);
+        JLabel labelAnio = new JLabel("Año:");
+        JTextField textAnio = new JTextField(4);
 
         JButton botonInscribir = new JButton("Inscribir");
 
@@ -69,28 +65,32 @@ public class InscripcionPanel extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Alumno alumnoSeleccionado = (Alumno) comboAlumnos.getSelectedItem();
                 Curso cursoSeleccionado = (Curso) comboCursos.getSelectedItem();
-                double calificacion = Double.parseDouble(textCalificacion.getText());
+                String anioText = textAnio.getText();
 
-                System.out.println("Alumno seleccionado: " + alumnoSeleccionado);
-                System.out.println("Curso seleccionado: " + cursoSeleccionado);
-
-                if (alumnoSeleccionado == null || cursoSeleccionado == null) {
-                    JOptionPane.showMessageDialog(panel, "Debe seleccionar un alumno y un curso.");
+                if (alumnoSeleccionado == null || cursoSeleccionado == null || anioText.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Debe seleccionar un alumno, un curso y especificar el año.");
                     return;
                 }
 
-                boolean exito = false;
-
                 try {
-                    exito = inscripcionService.inscribirAlumnoEnCurso(alumnoSeleccionado.getNombreUsuario(), cursoSeleccionado.getNombreCurso(), calificacion);
+                    int anio = Integer.parseInt(anioText);
+
+                    boolean exito = inscripcionService.inscribirAlumnoEnCurso(
+                            alumnoSeleccionado.getNombreUsuario(),
+                            cursoSeleccionado.getNombreCurso(),
+                            anio
+                    );
+
+                    if (exito) {
+                        JOptionPane.showMessageDialog(panel, "Alumno inscrito exitosamente.");
+                    } else {
+                        JOptionPane.showMessageDialog(panel, "No se pudo inscribir al alumno.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(panel, "El año debe ser un número válido.");
                 } catch (DAOException ex) {
                     ex.printStackTrace();
-                    throw new RuntimeException(ex);
-                }
-                if (exito) {
-                    JOptionPane.showMessageDialog(panel, "Alumno inscrito exitosamente.");
-                } else {
-                    JOptionPane.showMessageDialog(panel, "No se pudo inscribir al alumno.");
+                    JOptionPane.showMessageDialog(panel, "Ocurrió un error al inscribir al alumno.");
                 }
             }
         });
@@ -99,8 +99,8 @@ public class InscripcionPanel extends JFrame {
         panel.add(comboAlumnos);
         panel.add(new JLabel("Curso:"));
         panel.add(comboCursos);
-        panel.add(labelCalificacion);
-        panel.add(textCalificacion);
+        panel.add(labelAnio);
+        panel.add(textAnio);
         panel.add(botonInscribir);
 
         return panel;
@@ -111,8 +111,8 @@ public class InscripcionPanel extends JFrame {
         panel.setLayout(new FlowLayout());
 
         JLabel labelUsuario = new JLabel("Seleccione el alumno:");
-        List<Alumno> alumnos = alumnoDAO.recuperarTodos(); // Obtener lista de alumnos
-        JComboBox<Alumno> comboAlumnos = new JComboBox<>(alumnos.toArray(new Alumno[0])); // Convertir lista a array para JComboBox
+        List<Alumno> alumnos = alumnoDAO.recuperarTodos();
+        JComboBox<Alumno> comboAlumnos = new JComboBox<>(alumnos.toArray(new Alumno[0]));
 
         JButton botonVer = new JButton("Ver inscripciones");
 
@@ -133,7 +133,7 @@ public class InscripcionPanel extends JFrame {
                     StringBuilder report = new StringBuilder("Inscripciones:\n");
                     for (Inscripcion inscripcion : inscripciones) {
                         report.append("Curso: ").append(inscripcion.getNombreCurso())
-                                .append(" - Calificación Final: ").append(inscripcion.getCalificacionFinal())
+                                .append(" - Año: ").append(inscripcion.getAnio())
                                 .append("\n");
                     }
                     JOptionPane.showMessageDialog(panel, report.toString());
@@ -142,7 +142,7 @@ public class InscripcionPanel extends JFrame {
         });
 
         panel.add(labelUsuario);
-        panel.add(comboAlumnos); // Añadir combo box en lugar de text field
+        panel.add(comboAlumnos);
         panel.add(botonVer);
 
         return panel;
@@ -153,8 +153,8 @@ public class InscripcionPanel extends JFrame {
         panel.setLayout(new FlowLayout());
 
         JLabel labelCurso = new JLabel("Seleccione el curso:");
-        List<Curso> cursos = cursoDAO.recuperarTodos(); // Obtener lista de cursos
-        JComboBox<Curso> comboCursos = new JComboBox<>(cursos.toArray(new Curso[0])); // Convertir lista a array para JComboBox
+        List<Curso> cursos = cursoDAO.recuperarTodos();
+        JComboBox<Curso> comboCursos = new JComboBox<>(cursos.toArray(new Curso[0]));
 
         JButton botonVer = new JButton("Ver inscripciones");
 
@@ -175,7 +175,7 @@ public class InscripcionPanel extends JFrame {
                     StringBuilder report = new StringBuilder("Inscripciones:\n");
                     for (Inscripcion inscripcion : inscripciones) {
                         report.append("Alumno: ").append(inscripcion.getNombreUsuario())
-                                .append(" - Calificación Final: ").append(inscripcion.getCalificacionFinal())
+                                .append(" - Año: ").append(inscripcion.getAnio())
                                 .append("\n");
                     }
                     JOptionPane.showMessageDialog(panel, report.toString());
@@ -184,37 +184,11 @@ public class InscripcionPanel extends JFrame {
         });
 
         panel.add(labelCurso);
-        panel.add(comboCursos); // Añadir combo box en lugar de text field
+        panel.add(comboCursos);
         panel.add(botonVer);
 
         return panel;
     }
-
-
-  /*  private static JPanel crearGenerarReportePanel() {
-        JPanel panel = new JPanel();
-        JButton botonGenerarReporte = new JButton("Generar reporte de inscripciones");
-
-        botonGenerarReporte.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ReporteService reporteService = new ReporteService();
-                List<Map<String, Object>> reporte = null;
-                try {
-                    reporte = reporteService.generarReporte();
-                } catch (ServiceException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-
-                mostrarReporte(reporte);
-            }
-        });
-
-        panel.add(botonGenerarReporte);
-        return panel;
-    }*/
-
 
     private JPanel crearVolverPanel() {
         JPanel panel = new JPanel();
@@ -223,12 +197,11 @@ public class InscripcionPanel extends JFrame {
         botonVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProfesorPanel panel1 = new ProfesorPanel();
+                ProfesorPanel pf = new ProfesorPanel();
+                pf.setVisible(true);
                 dispose();
-
             }
         });
-
         panel.add(botonVolver);
         return panel;
     }

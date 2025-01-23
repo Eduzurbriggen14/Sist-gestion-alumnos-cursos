@@ -10,27 +10,25 @@ public class ProfesorCursoService {
 
     private IProfesorCursoDao profesorCursoDao;
 
-    // Constructor con la conexión
-    public ProfesorCursoService(Connection connection) {
+    public ProfesorCursoService( ) {
         this.profesorCursoDao = new ProfesorCursoDao();
     }
 
-    // Método para asignar un curso a un profesor
-    public void asignarCursoAProfesor(ProfesorCurso profesorCurso) throws Exception {
-        profesorCursoDao.asignarCursoAProfesor(profesorCurso);
-    }
+    public void asignarCursoAProfesor(String nombreUsuarioProfesor, String nombreCurso, int anio)throws Exception {
+        try {
+            profesorCursoDao.asignarCursoAProfesor(nombreUsuarioProfesor, nombreCurso, anio);
+        } catch (Exception e) {
+            throw new Exception("Error al asignar el curso al profesor: " + e.getMessage(), e);
+        }    }
 
-    // Método para obtener los cursos asignados a un profesor
     public List<ProfesorCurso> obtenerCursosPorProfesor(String nombreUsuarioProfesor) throws Exception {
         return profesorCursoDao.obtenerCursosPorProfesor(nombreUsuarioProfesor);
     }
 
-    // Método para eliminar un curso asignado a un profesor
     public void eliminarCursoDeProfesor(String nombreUsuarioProfesor, String nombreCurso) throws Exception {
         profesorCursoDao.eliminarCursoDeProfesor(nombreUsuarioProfesor, nombreCurso);
     }
 
-    // Método para obtener la asignación de un curso de un profesor específico
     public ProfesorCurso obtenerProfesorCursoPorUsuarioYCurso(String nombreUsuarioProfesor, String nombreCurso) throws Exception {
         return profesorCursoDao.obtenerProfesorCursoPorUsuarioYCurso(nombreUsuarioProfesor, nombreCurso);
     }

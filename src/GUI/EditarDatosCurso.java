@@ -82,24 +82,6 @@ public class EditarDatosCurso extends JFrame {
         precioCursoField.setBounds(170, 180, 200, 25);
         panel.add(precioCursoField);
 
-        JLabel semestreLabel = new JLabel("Semestre:");
-        semestreLabel.setBounds(10, 220, 150, 25);
-        panel.add(semestreLabel);
-
-        // ComboBox para semestres
-        semestreComboBox = new JComboBox<>(new String[]{"A-Marzo/Julio", "B-Agosto/Noviembre"});
-        semestreComboBox.setBounds(170, 220, 200, 25);
-        panel.add(semestreComboBox);
-
-        // Año
-        JLabel anioLabel = new JLabel("Año:");
-        anioLabel.setBounds(10, 260, 150, 25);
-        panel.add(anioLabel);
-
-        anioField = new JTextField(4);
-        anioField.setBounds(170, 260, 200, 25);
-        panel.add(anioField);
-
         // Botones
         actualizarButton = new JButton("Actualizar");
         actualizarButton.setBounds(10, 300, 150, 25);
@@ -126,9 +108,8 @@ public class EditarDatosCurso extends JFrame {
                 String descripcionCurso = descripcionCursoField.getText().trim();
                 String cupoStr = cupoField.getText().trim();
                 String precioCursoStr = precioCursoField.getText().trim();
-                String anioStr = anioField.getText().trim(); // Obtener el valor del año
 
-                if (nombreCurso.isEmpty() || descripcionCurso.isEmpty() || cupoStr.isEmpty() || precioCursoStr.isEmpty() || anioStr.isEmpty()) {
+                if (nombreCurso.isEmpty() || descripcionCurso.isEmpty() || cupoStr.isEmpty() || precioCursoStr.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -159,7 +140,7 @@ public class EditarDatosCurso extends JFrame {
                     return;
                 }
 
-                try {
+               /* try {
                     anio = Integer.parseInt(anioStr);
                     if (anio < 2000 || anio > 2100) {
                         JOptionPane.showMessageDialog(null, "Por favor, ingrese un año entre 2000 y 2100.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -177,7 +158,7 @@ public class EditarDatosCurso extends JFrame {
                     semestre = Semestre.SEMESTRE_A;
                 } else if ("B-Agosto/Noviembre".equals(semestreSeleccionado)) {
                     semestre = Semestre.SEMESTRE_B;
-                }
+                }*/
 
                 // Crear el curso con los nuevos datos
                 Curso cursoSeleccionado = (Curso) cursoComboBox.getSelectedItem();
@@ -185,10 +166,6 @@ public class EditarDatosCurso extends JFrame {
                 cursoSeleccionado.setDescripcionCurso(descripcionCurso);
                 cursoSeleccionado.setCupo(cupo);
                 cursoSeleccionado.setPrecioCurso(precioCurso);
-                cursoSeleccionado.setSemestre(semestre);
-                cursoSeleccionado.setAnio(anio);
-
-
                 cursoService.modificarCurso(cursoSeleccionado);
 
                 JOptionPane.showMessageDialog(null, "Curso actualizado correctamente.");
@@ -222,8 +199,7 @@ public class EditarDatosCurso extends JFrame {
             descripcionCursoField.setText(cursoSeleccionado.getDescripcionCurso());
             cupoField.setText(String.valueOf(cursoSeleccionado.getCupo()));
             precioCursoField.setText(String.valueOf(cursoSeleccionado.getPrecioCurso()));
-            anioField.setText(String.valueOf(cursoSeleccionado.getAnio()));
-            semestreComboBox.setSelectedItem(cursoSeleccionado.getSemestre() == Semestre.SEMESTRE_A ? "A-Marzo/Julio" : "B-Agosto/Noviembre");
+
         }
     }
 }

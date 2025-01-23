@@ -13,7 +13,7 @@ public class CursoDAO implements ICursoDAO {
     // Método para guardar un curso en la base de datos
     @Override
     public void guardar(Curso curso) throws DAOException {
-        String sql = "INSERT INTO curso (nombreCurso, descripcionCurso, cupo, precioCurso, semestre, anio) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO curso (nombreCurso, descripcionCurso, cupo, precioCurso) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DBConfig.getConexion();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -22,8 +22,6 @@ public class CursoDAO implements ICursoDAO {
             ps.setString(2, curso.getDescripcionCurso());
             ps.setInt(3, curso.getCupo());
             ps.setDouble(4, curso.getPrecioCurso());
-            ps.setString(5, curso.getSemestre().name());
-            ps.setInt(6, curso.getAnio());
 
 
 
@@ -59,7 +57,7 @@ public class CursoDAO implements ICursoDAO {
     // Método para modificar un curso existente
     @Override
     public void modificar(Curso curso) throws DAOException {
-        String sql = "UPDATE curso SET descripcionCurso = ?, cupo = ?, precioCurso = ?, semestre = ?, anio = ? WHERE nombreCurso = ?";
+        String sql = "UPDATE curso SET descripcionCurso = ?, cupo = ?, precioCurso = ? WHERE nombreCurso = ?";
 
         try (Connection connection = DBConfig.getConexion();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -67,9 +65,7 @@ public class CursoDAO implements ICursoDAO {
             ps.setString(1, curso.getDescripcionCurso());
             ps.setInt(2, curso.getCupo());
             ps.setDouble(3, curso.getPrecioCurso());
-            ps.setString(4, curso.getSemestre().name());
-            ps.setInt(5, curso.getAnio());
-            ps.setString(6, curso.getNombreCurso()); // El nombre va al final para la condición WHERE
+            ps.setString(4, curso.getNombreCurso()); // El nombre va al final para la condición WHERE
 
             ps.executeUpdate();
             System.out.println("Curso modificado correctamente");
@@ -96,10 +92,9 @@ public class CursoDAO implements ICursoDAO {
                         rs.getString("nombreCurso"),
                         rs.getString("descripcionCurso"),
                         rs.getInt("cupo"),
-                        rs.getDouble("precioCurso"),
-                        Semestre.valueOf(rs.getString("semestre")),
-                        rs.getInt("anio")
+                        rs.getDouble("precioCurso")
                 );
+                curso.setId(rs.getInt("id"));
             }
 
         } catch (SQLException e) {
@@ -124,9 +119,7 @@ public class CursoDAO implements ICursoDAO {
                         rs.getString("nombreCurso"),
                         rs.getString("descripcionCurso"),
                         rs.getInt("cupo"),
-                        rs.getDouble("precioCurso"),
-                        Semestre.valueOf(rs.getString("semestre")),
-                        rs.getInt("anio")
+                        rs.getDouble("precioCurso")
                 );
                 cursos.add(curso);
             }
@@ -176,10 +169,8 @@ public class CursoDAO implements ICursoDAO {
                         rs.getString("nombreCurso"),
                         rs.getString("descripcionCurso"),
                         rs.getInt("cupo"),
-                        rs.getDouble("precioCurso"),
-                        Semestre.valueOf(rs.getString("semestre")),
-                        rs.getInt("anio"));
-
+                        rs.getDouble("precioCurso")
+                );
             }
 
         } catch (SQLException e) {
