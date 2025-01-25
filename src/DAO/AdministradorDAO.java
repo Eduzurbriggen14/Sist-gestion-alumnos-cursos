@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IAdministradorDAO;
 import DB.DBConfig;
 import Entidades.Administrador;
 import Entidades.TipoUsuario;

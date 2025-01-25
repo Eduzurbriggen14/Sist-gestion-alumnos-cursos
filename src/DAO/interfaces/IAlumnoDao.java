@@ -1,7 +1,7 @@
-package DAO;
+package DAO.interfaces;
 
+import DAO.DAOException;
 import Entidades.Alumno;
-import Entidades.Usuario;
 
 import java.util.List;
 

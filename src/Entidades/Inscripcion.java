@@ -1,6 +1,7 @@
 package Entidades;
 
 public class Inscripcion {
+    private int id;
     private String nombreUsuario;
     private String nombreCurso;
     private int anio;
@@ -10,6 +11,18 @@ public class Inscripcion {
         this.nombreUsuario = nombreUsuario;
         this.nombreCurso = nombreCurso;
         this.anio = anio;
+    }
+
+    public Inscripcion(int id){
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     // Getters y setters

@@ -1,7 +1,6 @@
 package GUI;
 
 import Entidades.Curso;
-import Entidades.Semestre;
 import Service.CursoService;
 
 import javax.swing.*;

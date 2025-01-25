@@ -1,9 +1,9 @@
 package Service;
 
-import DAO.IUsuarioCursoCalificacionDAO;
+import DAO.interfaces.IUsuarioCursoCalificacionDAO;
 import DAO.UsuarioCursoCalificacionDAO;
 import Entidades.*;
-import java.sql.Connection;
+
 import java.util.List;
 
 public class UsuarioCursoCalificacionService {

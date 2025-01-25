@@ -173,6 +173,9 @@ public class AdminPanel extends JFrame {
         listadosCursosPorProfesor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                ListarCursosPorPRofesor listar = new ListarCursosPorPRofesor();
+                listar.setVisible(true);
                 dispose();
             }
         });

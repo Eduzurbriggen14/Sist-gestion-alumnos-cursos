@@ -2,7 +2,7 @@ package Service;
 
 import DAO.DAOException;
 
-import DAO.IProfesor;
+import DAO.interfaces.IProfesor;
 import DAO.ProfesorDAO;
 import Entidades.Profesor;
 

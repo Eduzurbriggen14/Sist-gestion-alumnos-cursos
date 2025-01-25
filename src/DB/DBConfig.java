@@ -213,25 +213,24 @@ public class DBConfig {
         }
     }
 
-    public static void crearTablaCalificacionUsuarioCurso() {
+    public static void crearTablaCalificacionInscripcion() {
         Connection conn = getConexion();
         Statement stmt = null;
 
         try {
             stmt = conn.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS usuario_curso_calificacion (" +
+            String sql = "CREATE TABLE IF NOT EXISTS calificacion_inscripcion (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "id_usuario INT NOT NULL, " +
-                    "id_curso INT NOT NULL, " +
-                    "fecha_inicio DATE NOT NULL, " +
-                    "condicion VARCHAR(50) NOT NULL, " +
-                    "FOREIGN KEY (id_usuario) REFERENCES usuario(id), " +
-                    "FOREIGN KEY (id_curso) REFERENCES curso(id) " +
+                    "id_inscripcion int NOT NULL, "+
+                    "valor_nota DOUBLE NOT NULL, "+
+                    "fecha DATE NOT NULL, " +
+                    "tipo ENUM('nota1', 'nota2', 'recuperatorio') NOT NULL, " +
+                    "FOREIGN KEY (id_inscripcion) REFERENCES inscripciones(id) "+
                     ");";
             stmt.executeUpdate(sql);
-            System.out.println("Tabla 'usuario_curso_calificacion' creada con éxito.");
+            System.out.println("Tabla 'calificacion_inscripcion' creada con éxito.");
         } catch (SQLException e) {
-            System.err.println("Error al crear la tabla 'usuario_curso_calificacion': " + e.getMessage());
+            System.err.println("Error al crear la tabla 'calificacion_inscripcion': " + e.getMessage());
         } finally {
             if (stmt != null) {
                 try {

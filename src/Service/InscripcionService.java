@@ -79,4 +79,8 @@ public class InscripcionService {
         return inscripcionDAO.obtenerTodos();
     }
 
+    public Inscripcion obtener(String nombreUsuario, String nombreCurso){
+        return inscripcionDAO.obtener(nombreUsuario, nombreCurso);
+    }
+
 }

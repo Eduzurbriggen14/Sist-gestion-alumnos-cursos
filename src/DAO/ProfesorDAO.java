@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IProfesor;
 import DB.DBConfig;
 import Entidades.Profesor;
 import Entidades.TipoUsuario;
@@ -8,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfesorDAO implements IProfesor{
+public class ProfesorDAO implements IProfesor {
 
 
     @Override

@@ -1,5 +1,6 @@
-package DAO;
+package DAO.interfaces;
 
+import DAO.DAOException;
 import Entidades.Administrador;
 
 import java.util.List;

@@ -1,7 +1,5 @@
 package Entidades;
 
-
-
 public class Profesor extends Usuario{
     private int id;
     private TipoUsuario tipoUsuario;

@@ -14,7 +14,8 @@ import java.sql.Connection;
 public class ProfesorPanel extends JFrame {
     private JButton inscribirAlumno;
     private JButton verNotasCurso;
-    private JButton editarMisDatos; // Nuevo botón para editar los datos
+    private JButton editarMisDatos;
+    private JButton notas;
     private Connection conexion;
     private ProfesorService prof;
 
@@ -51,6 +52,10 @@ public class ProfesorPanel extends JFrame {
         editarMisDatos.setBounds(10, 80, 150, 25);
         panel.add(editarMisDatos);
 
+        notas = new JButton("Agregar notas aumnos");
+        notas.setBounds(10,110,150,25);
+        panel.add(notas);
+
         // Acción para el botón "Inscribir Alumno"
         inscribirAlumno.addActionListener(new ActionListener() {
             @Override
@@ -70,7 +75,9 @@ public class ProfesorPanel extends JFrame {
         verNotasCurso.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lógica para mostrar las notas de los alumnos
+                NotasPorCurso notas = new NotasPorCurso();
+                notas.setVisible(true);
+                dispose();
             }
         });
 
@@ -91,6 +98,20 @@ public class ProfesorPanel extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 }
+            }
+        });
+
+        notas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    IngresoDeNotas ingresoDeNotas = new IngresoDeNotas();
+                    ingresoDeNotas.setVisible(true);
+                } catch (DAOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                dispose();
+
             }
         });
     }

@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IInscripcionDAO;
 import Entidades.Alumno;
 import Entidades.Curso;
 import Entidades.Inscripcion;
@@ -75,6 +76,8 @@ public class InscripcionDAO implements IInscripcionDAO {
         int idAlumno = obtenerIdAlumno(nombreUsuario);
         int idCurso = obtenerIdCurso(nombreCurso);
 
+        System.out.println("id alumno-- "+ idAlumno + "\nid curso ---" + idCurso);
+
         if (idAlumno == -1 || idCurso == -1) {
             System.out.println("Error: Alumno o curso no encontrado.");
             return null;
@@ -86,11 +89,14 @@ public class InscripcionDAO implements IInscripcionDAO {
             stmt.setInt(2, idCurso);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Inscripcion(
+                Inscripcion insc = new Inscripcion(
                         nombreUsuario,
                         nombreCurso,
                         rs.getInt("anio")
                 );
+                insc.setId(rs.getInt("id"));
+                return insc;
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,7 +150,6 @@ public class InscripcionDAO implements IInscripcionDAO {
             return inscripciones;
         }
 
-        // Sentencia para obtener inscripciones por ID del curso
         String sql = "SELECT * FROM inscripciones WHERE curso_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, idCurso);  // ID del curso
@@ -157,11 +162,9 @@ public class InscripcionDAO implements IInscripcionDAO {
 
                 String nUsuario = alumno.getNombreUsuario();
                 String nCurso = curso.getNombreCurso();
-                inscripciones.add(new Inscripcion(
-                        nUsuario,
-                        nCurso,
-                        rs.getInt("anio")
-                ));
+                Inscripcion inscripto = new Inscripcion(nUsuario, nCurso, rs.getInt("anio"));
+                inscripto.setId(rs.getInt("id"));
+                inscripciones.add(inscripto);
             }
         } catch (SQLException | DAOException e) {
             e.printStackTrace();

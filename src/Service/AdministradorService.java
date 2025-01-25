@@ -1,6 +1,7 @@
 package Service;
 
 import DAO.*;
+import DAO.interfaces.IAdministradorDAO;
 import Entidades.Administrador;
 
 
@@ -11,7 +12,7 @@ public class AdministradorService {
     private IAdministradorDAO administradorDAO;
 
     public AdministradorService() {
-        administradorDAO = new AdministradorDAO(); //instancia de adm DAO
+        administradorDAO = new AdministradorDAO();
     }
 
     public void guardar(Administrador administrador) throws ServiceException {

@@ -1,12 +1,12 @@
 package DAO;
 
+import DAO.interfaces.ICursoDAO;
 import Entidades.Curso;
-import Entidades.Semestre;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import DB.DBConfig;
-import Entidades.TipoUsuario;
 
 public class CursoDAO implements ICursoDAO {
 

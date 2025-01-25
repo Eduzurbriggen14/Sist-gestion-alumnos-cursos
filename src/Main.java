@@ -9,7 +9,8 @@ public class Main {
 
         DBConfig con = new DBConfig();
         DBConfig.getConexion();
-       // DBConfig.crearTablaInscripcion();
+
+
 
 
         Login log = new Login();

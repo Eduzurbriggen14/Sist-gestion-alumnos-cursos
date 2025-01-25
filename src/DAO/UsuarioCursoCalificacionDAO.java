@@ -1,6 +1,6 @@
 package DAO;
 
-import DB.DBConfig;
+import DAO.interfaces.IUsuarioCursoCalificacionDAO;
 import Entidades.*;
 
 import java.sql.*;

@@ -1,7 +1,5 @@
 package GUI;
 
-import DAO.CursoDAO;
-import DAO.ICursoDAO;
 import Entidades.*;
 import Service.AlumnoCursoService;
 import Service.AlumnoService;
@@ -10,13 +8,8 @@ import Service.CursoService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.time.LocalDate;
-import java.sql.Date;
 import java.util.List;
 
 public class ListarCursos extends JFrame {
@@ -38,7 +31,7 @@ public class ListarCursos extends JFrame {
         setTitle("Cursos Disponibles");
         setSize(600, 400);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cerrar solo esta ventana, no la aplicación
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Crear un layout para organizar los componentes
         setLayout(new BorderLayout());

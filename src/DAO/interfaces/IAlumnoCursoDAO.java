@@ -1,10 +1,10 @@
-package DAO;
+package DAO.interfaces;
 
+import DAO.DAOException;
 import Entidades.AlumnoCurso;
 import Entidades.Alumno;
 import Entidades.Curso;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface IAlumnoCursoDAO {

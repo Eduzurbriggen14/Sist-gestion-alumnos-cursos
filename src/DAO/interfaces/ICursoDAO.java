@@ -1,6 +1,6 @@
-package DAO;
+package DAO.interfaces;
 
-import Entidades.Alumno;
+import DAO.DAOException;
 import Entidades.Curso;
 
 import java.util.List;

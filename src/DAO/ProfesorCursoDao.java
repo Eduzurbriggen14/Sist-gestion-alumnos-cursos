@@ -1,10 +1,10 @@
 package DAO;
 
+import DAO.interfaces.IProfesorCursoDao;
 import DB.DBConfig;
-import Entidades.ProfesorCurso;
 import Entidades.Profesor;
 import Entidades.Curso;
-import Entidades.Semestre;
+import Entidades.ProfesorCurso;
 import Service.CursoService;
 import Service.ProfesorService;
 
@@ -70,10 +70,10 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
 
     @Override
     public List<ProfesorCurso> obtenerCursosPorProfesor(String nombreUsuarioProfesor) throws Exception {
-        String sql = "SELECT p.nombre, c.nombreCurso, pc.anio " +
+        String sql = "SELECT c.nombreCurso, pc.anio " +
                 "FROM profesor_curso pc " +
-                "JOIN profesor p ON pc.id_profesor = p.id " +
-                "JOIN curso c ON pc.id_curso = c.id " +
+                "JOIN profesor p ON pc.profesor_id = p.id " +
+                "JOIN curso c ON pc.curso_id = c.id " +
                 "WHERE p.nombreUsuario = ?";
 
         List<ProfesorCurso> profesorCursos = new ArrayList<>();
@@ -83,11 +83,9 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Profesor profesor = new Profesor(rs.getString("nombre"), null, rs.getString("nombreUsuario"), null, null);  // Completa los datos si es necesario
                     Curso curso = new Curso(rs.getString("nombreCurso"));
                     int anio = rs.getInt("anio");
-
-                    ProfesorCurso profesorCurso = new ProfesorCurso(profesor, curso, anio);
+                    ProfesorCurso profesorCurso = new ProfesorCurso(null, curso, anio);
                     profesorCursos.add(profesorCurso);
                 }
             }
@@ -97,29 +95,44 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
         return profesorCursos;
     }
 
+
     @Override
     public void eliminarCursoDeProfesor(String nombreUsuarioProfesor, String nombreCurso) throws Exception {
-        String sql = "DELETE FROM profesor_curso WHERE id_profesor = ? AND id_curso = ?";
+        PreparedStatement stmt = null;
+        String sql = "DELETE FROM profesor_curso WHERE profesor_id = ? AND curso_id = ?";
 
-        try (Connection connection = DBConfig.getConexion();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try {
+
+            // Asegúrate de que estas funciones no estén cerrando la conexión
             int idProfesor = obtenerIdProfesorPorNombreUsuario(nombreUsuarioProfesor);
             int idCurso = obtenerIdCursoPorNombre(nombreCurso);
-
+            System.out.println("id profesor " + idProfesor + "\nid curso " + idCurso);
+            if (idCurso == -1 || idProfesor == -1){
+                throw new DAOException("no se encontro id de curso o profesor");
+            }
+            stmt = connection.prepareStatement(sql);
             stmt.setInt(1, idProfesor);
             stmt.setInt(2, idCurso);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new Exception("No se encontró una relación entre el profesor y el curso para eliminar.");
+            }
         } catch (SQLException e) {
+            // Log the full stack trace for debugging
+            e.printStackTrace();
             throw new Exception("Error al eliminar curso del profesor: " + e.getMessage(), e);
         }
     }
 
+
     @Override
     public ProfesorCurso obtenerProfesorCursoPorUsuarioYCurso(String nombreUsuarioProfesor, String nombreCurso) throws Exception {
-        String sql = "SELECT p.nombre, c.nombreCurso, pc.semestre, pc.anio " +
+        String sql = "SELECT p.nombre, c.nombreCurso, pc.anio " +
                 "FROM profesor_curso pc " +
-                "JOIN profesor p ON pc.id_profesor = p.id " +
-                "JOIN curso c ON pc.id_curso = c.id " +
+                "JOIN profesor p ON pc.profesor_id = p.id " +
+                "JOIN curso c ON pc.curso_id = c.id " +
                 "WHERE p.nombreUsuario = ? AND c.nombreCurso = ?";
 
         try (Connection connection = DBConfig.getConexion();
@@ -131,7 +144,6 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
                 if (rs.next()) {
                     Profesor profesor = new Profesor(rs.getString("nombre"), null, rs.getString("nombreUsuario"), null, null);
                     Curso curso = new Curso(rs.getString("nombreCurso"));
-                    Semestre semestre = Semestre.valueOf(rs.getString("semestre"));
                     int anio = rs.getInt("anio");
 
                     return new ProfesorCurso(profesor, curso, anio);
@@ -143,7 +155,6 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
         return null;
     }
 
-    // Métodos auxiliares para obtener los IDs de Profesor y Curso por nombre
     private int obtenerIdProfesorPorNombreUsuario(String nombreUsuario) throws SQLException {
         String sql = "SELECT id FROM profesor WHERE nombreUsuario = ?";
         try (Connection connection = DBConfig.getConexion();

@@ -19,10 +19,10 @@ public class UsuarioSesion extends Usuario {
     }
     public void setTipoPorString(String tipoStr) {
         try {
-            this.tipo = TipoUsuario.valueOf(tipoStr);  // Convierte el String al enum TipoUsuario
+            this.tipo = TipoUsuario.valueOf(tipoStr);
         } catch (IllegalArgumentException e) {
             System.out.println("Error: Tipo de usuario inválido");
-            this.tipo = null;  // O asigna un valor predeterminado o lanza una excepción
+            this.tipo = null;
         }
     }
     public static void setUsuarioSesion(UsuarioSesion usuario) {

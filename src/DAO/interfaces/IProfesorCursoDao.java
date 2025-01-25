@@ -1,6 +1,7 @@
-package DAO;
+package DAO.interfaces;
 
 import Entidades.ProfesorCurso;
+
 import java.util.List;
 
 public interface IProfesorCursoDao {

@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IAlumnoCursoDAO;
 import Entidades.AlumnoCurso;
 import Entidades.Alumno;
 import Entidades.Curso;

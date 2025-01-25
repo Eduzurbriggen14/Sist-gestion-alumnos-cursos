@@ -2,7 +2,7 @@ package Service;
 
 import DAO.AlumnoDAO;
 import DAO.DAOException;
-import DAO.IAlumnoDao;
+import DAO.interfaces.IAlumnoDao;
 import Entidades.Alumno;
 
 import java.util.List;

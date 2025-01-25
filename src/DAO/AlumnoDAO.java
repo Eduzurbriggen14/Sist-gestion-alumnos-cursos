@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IAlumnoDao;
 import Entidades.Alumno;
 import Entidades.TipoUsuario;
 import java.sql.*;

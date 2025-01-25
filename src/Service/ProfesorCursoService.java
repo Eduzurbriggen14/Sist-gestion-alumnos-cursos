@@ -1,9 +1,9 @@
 package Service;
 
-import DAO.IProfesorCursoDao;
+import DAO.interfaces.IProfesorCursoDao;
 import DAO.ProfesorCursoDao;
 import Entidades.ProfesorCurso;
-import java.sql.Connection;
+
 import java.util.List;
 
 public class ProfesorCursoService {

@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.interfaces.IReporteDAO;
 import DB.DBConfig;
 
 import java.sql.Connection;
