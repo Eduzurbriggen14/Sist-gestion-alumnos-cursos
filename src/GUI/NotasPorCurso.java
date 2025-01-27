@@ -11,14 +11,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class NotasPorCurso extends JFrame {
     private JComboBox<String> comboCursos;
-    private JTable tablaAlumnos;
-    private JScrollPane scrollPane;
+    private JPanel panelPrincipal;
+    private JButton btnVolver;
 
     private InscripcionDAO inscripcionDAO;
     private CursoDAO cursoDAO;
@@ -30,20 +29,13 @@ public class NotasPorCurso extends JFrame {
         this.alumnoDAO = new AlumnoDAO();
         // Configurar la ventana
         setTitle("Cursos y Alumnos");
-        setSize(600, 400);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Panel principal
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        // Inicialización y configuración de la tabla
-        tablaAlumnos = new JTable();
-        configurarTabla();  // Aquí configuras el modelo de la tabla
-
-        // Scroll para la tabla
-        scrollPane = new JScrollPane(tablaAlumnos);
+        panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
 
         // ComboBox para seleccionar el curso
         comboCursos = new JComboBox<>();
@@ -51,9 +43,8 @@ public class NotasPorCurso extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String cursoSeleccionado = (String) comboCursos.getSelectedItem();
-                System.out.println(cursoSeleccionado);
                 if (cursoSeleccionado != null) {
-                   try {
+                    try {
                         cargarAlumnosDelCurso(cursoSeleccionado);
                     } catch (ServiceException ex) {
                         throw new RuntimeException(ex);
@@ -68,12 +59,24 @@ public class NotasPorCurso extends JFrame {
         panelCombo.add(new JLabel("Seleccione un curso:"));
         panelCombo.add(comboCursos);
 
-        // Añadir el panel principal
-        panel.add(panelCombo, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        // Botón para volver al panel del profesor
+        btnVolver = new JButton("Volver al Panel del Profesor");
+        btnVolver.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ProfesorPanel pp = new ProfesorPanel();
+                pp.setVisible(true);
+                dispose();  
+            }
+        });
 
-        // Añadir el panel a la ventana
-        add(panel);
+        JPanel panelBoton = new JPanel();
+        panelBoton.add(btnVolver);
+
+        // Añadir el panel principal
+        add(panelCombo, BorderLayout.NORTH);
+        add(panelPrincipal, BorderLayout.CENTER);
+        add(panelBoton, BorderLayout.SOUTH);
     }
 
     private void cargarCursos() {
@@ -85,127 +88,117 @@ public class NotasPorCurso extends JFrame {
         }
     }
 
-   /* private void cargarAlumnosDelCurso(String nombreCurso) throws ServiceException {
+    private void cargarAlumnosDelCurso(String nombreCurso) throws ServiceException {
         InscripcionService inscripcionService = new InscripcionService(inscripcionDAO, alumnoDAO, cursoDAO);
-
         List<Inscripcion> inscripcionesPorCurso = inscripcionService.obtenerInscripcionesPorCurso(nombreCurso);
 
-        DefaultTableModel modeloTabla = (DefaultTableModel) tablaAlumnos.getModel();
-        modeloTabla.setRowCount(0);
+        // Limpiar el panel principal antes de añadir nuevos datos
+        panelPrincipal.removeAll();
+        panelPrincipal.revalidate();
+        panelPrincipal.repaint();
 
         for (Inscripcion insc : inscripcionesPorCurso) {
             String nombreUsuario = insc.getNombreUsuario();
-
-            InscripcionDAO inscripcionDAO = new InscripcionDAO();
             Inscripcion inscId = inscripcionDAO.obtener(nombreUsuario, nombreCurso);
+
             if (inscId == null) {
                 System.out.println("No se encontró la inscripción para el usuario: " + nombreUsuario + " en el curso: " + nombreCurso);
                 continue;
             }
 
-            int id_inscriopcion = inscId.getId();
-            System.out.println("id en notas por curso " + id_inscriopcion);
-
+            int id_inscripcion = inscId.getId();
             CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
-            List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscriopcion);
+            List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscripcion);
 
-            AlumnoConCalificacion alumnoConCalificacion = new AlumnoConCalificacion(nombreUsuario, nombreCurso, calificaciones);
+            // Ordenar las calificaciones
+            List<CalificacionInscripcion> notasOrdenadas = new ArrayList<>(calificaciones);
+            notasOrdenadas.sort((c1, c2) -> {
+                if (c1.getTipo().equals("nota1")) return -1;
+                if (c1.getTipo().equals("nota2") && !c2.getTipo().equals("nota1")) return -1;
+                if (c1.getTipo().equals("recuperatorio")) return 1;
+                return 0;
+            });
 
-            for (CalificacionInscripcion calificacion : calificaciones) {
+            // Variables para el cálculo
+            double sumaNotas = 0;
+            int contadorNotas = notasOrdenadas.size(); // Corregido: contar notas totales
+            double nota1 = 0, nota2 = 0, recuperatorio = 0;
+
+            // Primero asignar las notas
+            for (CalificacionInscripcion calificacion : notasOrdenadas) {
+                String tipo = String.valueOf(calificacion.getTipo());
+                double valorNota = calificacion.getValorNota();
+
+                sumaNotas += valorNota;
+
+                switch (tipo) {
+                    case "nota1":
+                        nota1 = valorNota;
+                        break;
+                    case "nota2":
+                        nota2 = valorNota;
+                        break;
+                    case "recuperatorio":
+                        recuperatorio = valorNota;
+                        break;
+                }
+            }
+
+            double promedio = (contadorNotas > 0) ? sumaNotas / contadorNotas : 0;
+            String condicion;
+            if (contadorNotas == 0) {
+                condicion = "S/N";
+            } else if (contadorNotas < 2) {
+                condicion = Condicion.CURSANDO.name();
+            } else if (contadorNotas == 2) {
+                condicion = (nota1 >= 6.0 && nota2 >= 6.0) ?
+                        Condicion.APROBADO.name() :
+                        Condicion.RECUPERATORIO.name();
+            } else {
+                if ((nota1 >= 6.0 || nota2 >= 6.0) && recuperatorio >= 6.0) {
+                    condicion = Condicion.APROBADO.name();
+                } else if (recuperatorio < 6.0) {
+                    condicion = Condicion.DESAPROBADO.name();
+                } else {
+                    condicion = Condicion.RECUPERATORIO.name();
+                }
+            }
+
+            // Crear una tabla para cada alumno
+            JPanel panelAlumno = new JPanel();
+            panelAlumno.setLayout(new BorderLayout());
+
+            // Título con nombre del alumno, promedio y condición
+            String titulo = "Alumno: " + nombreUsuario + " | Promedio: " + promedio + " | Condición: " + condicion;
+            JLabel labelTitulo = new JLabel(titulo);
+            panelAlumno.add(labelTitulo, BorderLayout.NORTH);
+
+            // Crear la tabla para este alumno
+            JTable tablaAlumno = new JTable();
+            DefaultTableModel modeloTabla = new DefaultTableModel(
+                    new String[]{"Curso", "Calificación", "Tipo Nota", "Fecha"}, 0
+            );
+            tablaAlumno.setModel(modeloTabla);
+
+            // Agregar las calificaciones a la tabla
+            for (CalificacionInscripcion calificacion : notasOrdenadas) {
                 modeloTabla.addRow(new Object[]{
-                        nombreUsuario,
                         nombreCurso,
                         calificacion.getValorNota(),
                         calificacion.getTipo(),
                         calificacion.getFecha()
                 });
             }
+
+            // Agregar la tabla al panel
+            JScrollPane scrollPane = new JScrollPane(tablaAlumno);
+            panelAlumno.add(scrollPane, BorderLayout.CENTER);
+
+            // Añadir el panel del alumno al panel principal
+            panelPrincipal.add(panelAlumno);
         }
-    }*/
-   private void cargarAlumnosDelCurso(String nombreCurso) throws ServiceException {
-       InscripcionService inscripcionService = new InscripcionService(inscripcionDAO, alumnoDAO, cursoDAO);
 
-       List<Inscripcion> inscripcionesPorCurso = inscripcionService.obtenerInscripcionesPorCurso(nombreCurso);
-
-       // Panel contenedor para las tablas de los alumnos
-       JPanel panelAlumnos = new JPanel();
-       panelAlumnos.setLayout(new BoxLayout(panelAlumnos, BoxLayout.Y_AXIS)); // Agrega las tablas verticalmente
-
-       for (Inscripcion insc : inscripcionesPorCurso) {
-           String nombreUsuario = insc.getNombreUsuario();
-
-           InscripcionDAO inscripcionDAO = new InscripcionDAO();
-           Inscripcion inscId = inscripcionDAO.obtener(nombreUsuario, nombreCurso);
-           if (inscId == null) {
-               System.out.println("No se encontró la inscripción para el usuario: " + nombreUsuario + " en el curso: " + nombreCurso);
-               continue;
-           }
-
-           int id_inscriopcion = inscId.getId();
-           System.out.println("id en notas por curso " + id_inscriopcion);
-
-           CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
-           List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscriopcion);
-
-           // Crear el modelo de tabla para el alumno
-           DefaultTableModel modeloTabla = new DefaultTableModel();
-           modeloTabla.addColumn("Curso");
-           modeloTabla.addColumn("Nota");
-           modeloTabla.addColumn("Tipo");
-           modeloTabla.addColumn("Fecha");
-
-           // Calcular el promedio
-           double sumaNotas = 0;
-           int contadorNotas = 0;
-
-           for (CalificacionInscripcion calificacion : calificaciones) {
-               modeloTabla.addRow(new Object[]{
-                       nombreCurso,
-                       calificacion.getValorNota(),
-                       calificacion.getTipo(),
-                       calificacion.getFecha()
-               });
-
-               sumaNotas += calificacion.getValorNota();
-               contadorNotas++;
-           }
-
-           JTable tablaAlumno = new JTable(modeloTabla);
-           double promedio = (contadorNotas > 0) ? sumaNotas / contadorNotas : 0;
-           String condicion = "";
-           if (contadorNotas < 2){
-               condicion = String.valueOf(Condicion.CURSANDO);               
-           }else if(contadorNotas == 2 && promedio >= 6 ){
-               condicion = String.valueOf(Condicion.APROBADO);
-           } else if (contadorNotas == 3 && promedio >= 6 ) {
-               condicion = String.valueOf(Condicion.APROBADO);               
-           } else if (contadorNotas == 3 && promedio < 6) {
-               condicion = String.valueOf(Condicion.DESAPROBADO);
-               
-           }
-
-
-           JLabel labelAlumno = new JLabel("Alumno: " + nombreUsuario + " - Promedio: " + promedio +
-                   " - CONDICION: "+ condicion.toUpperCase());
-
-           panelAlumnos.add(labelAlumno);
-           panelAlumnos.add(new JScrollPane(tablaAlumno));
-       }
-
-       JFrame frame = new JFrame("Notas por Curso");
-       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       frame.getContentPane().add(new JScrollPane(panelAlumnos));
-       frame.pack();
-       frame.setVisible(true);
-   }
-
-
-
-    private void configurarTabla() {
-        DefaultTableModel modeloTabla = new DefaultTableModel(
-                new String[]{"Alumno", "Curso", "Calificación", "Tipo Nota", "Fecha"}, 0
-        );
-        tablaAlumnos.setModel(modeloTabla);
+        panelPrincipal.revalidate();
+        panelPrincipal.repaint();
     }
-
 }
