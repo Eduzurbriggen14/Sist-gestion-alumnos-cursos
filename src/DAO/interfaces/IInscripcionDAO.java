@@ -11,4 +11,5 @@ public interface IInscripcionDAO {
     public List<Inscripcion> obtenerPorAlumno(String nombreUsuario);
     public List<Inscripcion> obtenerPorCurso(String nombreCurso);
     public List<Inscripcion> obtenerTodos();
+    public void actualizarEstadoInscripcion(int id, String estado);
 }

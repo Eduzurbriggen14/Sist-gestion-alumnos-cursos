@@ -172,6 +172,17 @@ public class InscripcionDAO implements IInscripcionDAO {
         return inscripciones;
     }
 
+    public void actualizarEstadoInscripcion(int id, String estado) {
+        String sql = "UPDATE inscripciones SET condicion = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, estado);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public List<Inscripcion> obtenerTodos() {
         List<Inscripcion> inscripciones = new ArrayList<>();

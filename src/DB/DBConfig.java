@@ -187,6 +187,7 @@ public class DBConfig {
                     "alumno_id INT NOT NULL, " +
                     "curso_id INT NOT NULL, " +
                     "anio INT NOT NULL," +
+                    "condicion VARCHAR(25) Default cursando, "+
                     "FOREIGN KEY (alumno_id) REFERENCES alumno(id) ON DELETE CASCADE, " +
                     "FOREIGN KEY (curso_id) REFERENCES curso(id) ON DELETE CASCADE" +
                     ");";

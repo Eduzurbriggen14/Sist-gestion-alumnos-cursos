@@ -83,4 +83,8 @@ public class InscripcionService {
         return inscripcionDAO.obtener(nombreUsuario, nombreCurso);
     }
 
+    public void actualizarEstadoInscripcion(int id, String estado){
+        inscripcionDAO.actualizarEstadoInscripcion(id, estado);
+    }
+
 }

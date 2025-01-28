@@ -5,6 +5,7 @@ public class Inscripcion {
     private String nombreUsuario;
     private String nombreCurso;
     private int anio;
+    private String estadoInscripcion;
 
     // Constructor, getters y setters
     public Inscripcion(String nombreUsuario, String nombreCurso, int anio) {
@@ -47,5 +48,13 @@ public class Inscripcion {
 
     public void setAnio(int anio) {
         this.anio = anio;
+    }
+
+    public String getEstadoInscripcion() {
+        return estadoInscripcion;
+    }
+
+    public void setEstadoInscripcion(String estadoInscripcion) {
+        this.estadoInscripcion = estadoInscripcion;
     }
 }

@@ -5,6 +5,10 @@ import DAO.CursoDAO;
 import DAO.InscripcionDAO;
 import Entidades.*;
 import Service.*;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +16,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NotasPorCurso extends JFrame {
     private JComboBox<String> comboCursos;
@@ -66,7 +72,7 @@ public class NotasPorCurso extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ProfesorPanel pp = new ProfesorPanel();
                 pp.setVisible(true);
-                dispose();  
+                dispose();
             }
         });
 
@@ -94,9 +100,19 @@ public class NotasPorCurso extends JFrame {
 
         // Limpiar el panel principal antes de añadir nuevos datos
         panelPrincipal.removeAll();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
         panelPrincipal.revalidate();
         panelPrincipal.repaint();
 
+        // Crear el título del curso
+        JLabel labelCurso = new JLabel("Reporte de Alumnos - Curso: " + nombreCurso);
+        labelCurso.setFont(new Font("Arial", Font.BOLD, 16));
+        panelPrincipal.add(labelCurso);
+
+        // Para mantener el conteo de las condiciones de los alumnos
+        double cantAprobados = 0, cantDesaprobados = 0, cantRecuperatorio = 0, cantCursando = 0;
+        int id_inscripcion = -1;
+        // Para cada alumno inscrito en el curso
         for (Inscripcion insc : inscripcionesPorCurso) {
             String nombreUsuario = insc.getNombreUsuario();
             Inscripcion inscId = inscripcionDAO.obtener(nombreUsuario, nombreCurso);
@@ -106,9 +122,10 @@ public class NotasPorCurso extends JFrame {
                 continue;
             }
 
-            int id_inscripcion = inscId.getId();
+            id_inscripcion = inscId.getId();
             CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
             List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscripcion);
+            //System.out.println("Calificacion inscripcion desde bbdd" +calificaciones);
 
             // Ordenar las calificaciones
             List<CalificacionInscripcion> notasOrdenadas = new ArrayList<>(calificaciones);
@@ -119,16 +136,16 @@ public class NotasPorCurso extends JFrame {
                 return 0;
             });
 
-            // Variables para el cálculo
+            // Variables para el cálculo de promedio
             double sumaNotas = 0;
             int contadorNotas = notasOrdenadas.size(); // Corregido: contar notas totales
             double nota1 = 0, nota2 = 0, recuperatorio = 0;
 
             // Primero asignar las notas
             for (CalificacionInscripcion calificacion : notasOrdenadas) {
+                System.out.println(calificacion);
                 String tipo = String.valueOf(calificacion.getTipo());
                 double valorNota = calificacion.getValorNota();
-
                 sumaNotas += valorNota;
 
                 switch (tipo) {
@@ -164,7 +181,25 @@ public class NotasPorCurso extends JFrame {
                 }
             }
 
-            // Crear una tabla para cada alumno
+            // Actualizar el conteo por condición
+            switch (condicion) {
+                case ("APROBADO"):
+                    cantAprobados++;
+                    break;
+                case ("DESAPROBADO"):
+                    cantDesaprobados++;
+                    break;
+                case ("RECUPERATORIO"):
+                    cantRecuperatorio++;
+                    break;
+                case ("CURSANDO"):
+                    cantCursando++;
+                    break;
+                default:
+                    break;
+            }
+
+            // Crear una tabla para este alumno
             JPanel panelAlumno = new JPanel();
             panelAlumno.setLayout(new BorderLayout());
 
@@ -179,6 +214,7 @@ public class NotasPorCurso extends JFrame {
                     new String[]{"Curso", "Calificación", "Tipo Nota", "Fecha"}, 0
             );
             tablaAlumno.setModel(modeloTabla);
+            System.out.println(notasOrdenadas);
 
             // Agregar las calificaciones a la tabla
             for (CalificacionInscripcion calificacion : notasOrdenadas) {
@@ -198,7 +234,54 @@ public class NotasPorCurso extends JFrame {
             panelPrincipal.add(panelAlumno);
         }
 
+        // Generar el gráfico de estadísticas del curso
+        double cantAlumnosPorCurso = cantAprobados + cantDesaprobados + cantRecuperatorio + cantCursando;
+
+        if (cantAlumnosPorCurso == 0 && id_inscripcion <1  ) {
+            JOptionPane.showMessageDialog(null, "No hay alumnos inscritos en este curso.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double porcentajeAprobados = (cantAprobados / cantAlumnosPorCurso) * 100;
+        double porcentajeDesaprobados = (cantDesaprobados / cantAlumnosPorCurso) * 100;
+        double porcentajeRecuperatorio = (cantRecuperatorio / cantAlumnosPorCurso) * 100;
+        double porcentajeCursando = (cantCursando / cantAlumnosPorCurso) * 100;
+
+        Map<String, Double> estadisticasCurso = new HashMap<>();
+        estadisticasCurso.put("Porcentaje Aprobados", porcentajeAprobados);
+        estadisticasCurso.put("Porcentaje Desaprobados", porcentajeDesaprobados);
+        estadisticasCurso.put("Porcentaje Recuperatorio", porcentajeRecuperatorio);
+        estadisticasCurso.put("Porcentaje Cursando", porcentajeCursando);
+
+        ChartPanel graficoPastel = generarGraficoPastel(estadisticasCurso, nombreCurso);
+        panelPrincipal.add(graficoPastel);
+
         panelPrincipal.revalidate();
         panelPrincipal.repaint();
+    }
+
+    private ChartPanel generarGraficoPastel(Map<String, Double> estadisticas, String nombreCurso) {
+        DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
+
+        // Añadir solo condiciones con valores > 0
+        estadisticas.forEach((condicion, porcentaje) -> {
+            if (porcentaje > 0) {
+                String etiquetaConPorcentaje = condicion + " (" + String.format("%.2f", porcentaje) + "%)";
+                dataset.setValue(etiquetaConPorcentaje, porcentaje);
+            }
+        });
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Estadísticas del Curso: " + nombreCurso,
+                dataset,
+                true,   // legend
+                true,   // tooltips
+                false   // URLs
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(400, 300));
+
+        return chartPanel;
     }
 }
