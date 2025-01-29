@@ -18,7 +18,6 @@ public class ReporteService {
 
     public List<Map<String, Object>> generarReporte() throws ServiceException {
         try {
-            // Llamar al DAO para obtener los datos del reporte
             return reporteDAO.obtenerReporteCursos();
         } catch (Exception e) {
             throw new ServiceException("Error al generar el reporte", e);

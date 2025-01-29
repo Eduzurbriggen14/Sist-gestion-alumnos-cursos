@@ -18,7 +18,7 @@ public class ReporteDAO implements IReporteDAO {
     public List<Map<String, Object>> obtenerReporteCursos() {
         List<Map<String, Object>> reporte = new ArrayList<>();
 
-        String sql = """
+        /*String sql = """
         SELECT
             c.id AS curso_id,
             c.nombreCurso AS curso_nombre,
@@ -26,6 +26,28 @@ public class ReporteDAO implements IReporteDAO {
             a.id AS alumno_id,
             a.nombre AS alumno_nombre,
             c.precioCurso AS total_recaudado
+        FROM 
+            curso c
+        LEFT JOIN 
+            inscripciones i ON c.id = i.curso_id
+        LEFT JOIN 
+            alumno a ON i.alumno_id = a.id
+        ORDER BY 
+            c.id;
+    """;*/
+
+        String sql = """
+        SELECT
+            c.id AS curso_id,
+            c.nombreCurso AS curso_nombre,
+            c.precioCurso,
+            a.id AS alumno_id,
+            a.nombre AS alumno_nombre,
+            a.abonoAlumno AS abono_alumno,
+            CASE 
+                WHEN a.abonoAlumno = 1 THEN 0 
+                ELSE c.precioCurso
+            END AS total_recaudado
         FROM 
             curso c
         LEFT JOIN 
@@ -47,6 +69,7 @@ public class ReporteDAO implements IReporteDAO {
                 fila.put("precioCurso", rs.getDouble("precioCurso"));
                 fila.put("alumnoId", rs.getInt("alumno_id"));
                 fila.put("alumnoNombre", rs.getString("alumno_nombre"));
+                fila.put("abonoAlumno", rs.getInt("abono_alumno"));
                 fila.put("totalRecaudado", rs.getDouble("total_recaudado"));
                 reporte.add(fila);
             }
@@ -61,14 +84,27 @@ public class ReporteDAO implements IReporteDAO {
     public List<Map<String, Object>> obtenerReporteGrafico() {
         List<Map<String, Object>> grafico = new ArrayList<>();
 
-        String sql = """
+        /*String sql = """
                 SELECT
                 c.nombreCurso AS curso_nombre,
                 COALESCE(c.precioCurso * COUNT(i.id), 0) AS total_recaudado
                 FROM curso c
                 LEFT JOIN inscripciones i ON c.id = i.curso_id
                 GROUP BY c.nombreCurso, c.precioCurso;
-                """;
+                """;*/
+
+        String sql = """
+            SELECT
+            c.nombreCurso AS curso_nombre,
+            COALESCE(SUM(CASE 
+                            WHEN a.abonoAlumno = 1 THEN 0
+                            ELSE c.precioCurso
+                         END), 0) AS total_recaudado
+            FROM curso c
+            LEFT JOIN inscripciones i ON c.id = i.curso_id
+            LEFT JOIN alumno a on i.alumno_id = a.id
+            GROUP BY c.nombreCurso, c.precioCurso;
+            """;
         try (Connection con = DBConfig.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

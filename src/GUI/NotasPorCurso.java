@@ -198,6 +198,12 @@ public class NotasPorCurso extends JFrame {
                 default:
                     break;
             }
+            System.out.println("actualizando inscripcion " + id_inscripcion + condicion);
+            inscripcionDAO.actualizarEstadoInscripcion(id_inscripcion, condicion);
+
+            if (condicion.equals(Condicion.DESAPROBADO.name()) || condicion.equals(Condicion.APROBADO.name())) {
+                inscripcionDAO.actualizarEstadoActivo(id_inscripcion, false);
+            }
 
             // Crear una tabla para este alumno
             JPanel panelAlumno = new JPanel();

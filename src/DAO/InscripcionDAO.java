@@ -183,6 +183,17 @@ public class InscripcionDAO implements IInscripcionDAO {
         }
     }
 
+    public void actualizarEstadoActivo(int id, boolean estado){
+        String sql = "UPDATE inscripciones SET activo = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setBoolean(1, estado);
+            stmt.setInt(2,id);
+            stmt.executeQuery();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public List<Inscripcion> obtenerTodos() {
         List<Inscripcion> inscripciones = new ArrayList<>();

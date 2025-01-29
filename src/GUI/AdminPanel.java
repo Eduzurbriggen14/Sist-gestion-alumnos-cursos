@@ -85,7 +85,6 @@ public class AdminPanel extends JFrame {
                 ReporteDAO reporteDAO = new ReporteDAO();
                 List<Map<String, Object>> listaReporte = reporteDAO.obtenerReporteCursos();
 
-                // Verificar si los datos no son nulos ni vacíos
                 if (listaReporte == null || listaReporte.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "No se encontraron datos para mostrar el reporte.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;

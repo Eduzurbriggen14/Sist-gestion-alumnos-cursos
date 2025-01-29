@@ -17,16 +17,17 @@ public class ReportePanel extends JPanel {
 
         double totalGeneralRecaudado = 0;
 
-        // Agrupar datos por curso
         String cursoActual = null;
         DefaultTableModel modeloTabla = null;
         double totalCursoRecaudado = 0;
 
-        // Iterar sobre los datos del reporte
         for (Map<String, Object> fila : reporteDatos) {
             String curso = (String) fila.get("cursoNombre");
             String alumno = (fila.get("alumnoNombre") != null) ? (String) fila.get("alumnoNombre") : null;
             double precioCurso = (double) fila.get("precioCurso");
+            Object abonoObject = fila.get("abonoAlumno");
+            boolean tieneAbono = (abonoObject != null && (int) abonoObject == 1);  // Verifica si tiene abono
+
 
             // Si el curso cambia o es el primer curso
             if (!curso.equals(cursoActual)) {
@@ -43,9 +44,10 @@ public class ReportePanel extends JPanel {
 
             // Solo agregar filas si hay inscripciones
             if (alumno != null) {
-                modeloTabla.addRow(new Object[]{alumno, precioCurso});
-                totalCursoRecaudado += precioCurso;
-                totalGeneralRecaudado += precioCurso; // Sumar al total general
+                double precioPorAlumno = tieneAbono ? 0.0: precioCurso;
+                modeloTabla.addRow(new Object[]{alumno, precioPorAlumno});
+                totalCursoRecaudado += precioPorAlumno;
+                totalGeneralRecaudado += precioPorAlumno;
             }
         }
 
@@ -85,7 +87,6 @@ public class ReportePanel extends JPanel {
 
         JTable tablaCurso = new JTable(modeloTabla);
 
-        // Ajustar la altura de la tabla según la cantidad de filas
         tablaCurso.setRowHeight(30);
         int filaCount = modeloTabla.getRowCount();
         tablaCurso.setPreferredScrollableViewportSize(new Dimension(600, 30 * filaCount));
