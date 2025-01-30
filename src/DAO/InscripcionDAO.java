@@ -2,6 +2,7 @@ package DAO;
 
 import DAO.interfaces.IInscripcionDAO;
 import Entidades.Alumno;
+import Entidades.Condicion;
 import Entidades.Curso;
 import Entidades.Inscripcion;
 
@@ -50,28 +51,6 @@ public class InscripcionDAO implements IInscripcionDAO {
     }
 
     @Override
-    public void actualizar(Inscripcion inscripcion) {
-        int idAlumno = obtenerIdAlumno(inscripcion.getNombreUsuario());
-        int idCurso = obtenerIdCurso(inscripcion.getNombreCurso());
-        System.out.println("ID Alumno: " + idAlumno);
-        System.out.println("ID Curso: " + idCurso);
-        if (idAlumno == -1 || idCurso == -1) {
-            System.out.println("Error: Alumno o curso no encontrado.");
-            return;
-        }
-
-        String sql = "UPDATE inscripciones SET anio = ? WHERE alumno_id = ? AND curso_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, inscripcion.getAnio());
-            stmt.setInt(2, idAlumno);
-            stmt.setInt(3, idCurso);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public Inscripcion obtener(String nombreUsuario, String nombreCurso) {
         int idAlumno = obtenerIdAlumno(nombreUsuario);
         int idCurso = obtenerIdCurso(nombreCurso);
@@ -95,6 +74,8 @@ public class InscripcionDAO implements IInscripcionDAO {
                         rs.getInt("anio")
                 );
                 insc.setId(rs.getInt("id"));
+                insc.setCondicion(Condicion.valueOf(rs.getString("condicion")));
+                insc.setEstadoInscripcion(rs.getBoolean("activo"));
                 return insc;
 
             }
@@ -122,15 +103,19 @@ public class InscripcionDAO implements IInscripcionDAO {
                 alu = new AlumnoDAO();
                 c = new CursoDAO();
                 Alumno alumno = alu.recuperarPorId(rs.getInt("alumno_id"));
-                Curso curso = c.recuperarPorId(rs.getInt("curso_id"));
+                Curso curso = c.recuperarCursoPorId(rs.getInt("curso_id"));
 
                 String nUsuario = alumno.getNombreUsuario();
                 String nombreCurso = curso.getNombreCurso();
-                inscripciones.add(new Inscripcion(
+                Inscripcion insc = new Inscripcion(
                         nUsuario,
                         nombreCurso,
                         rs.getInt("anio")
-                ));
+                );
+                String condicion = rs.getString("condicion").toUpperCase();
+                insc.setCondicion(Condicion.valueOf(condicion));
+                insc.setEstadoInscripcion(rs.getBoolean("activo"));
+                inscripciones.add(insc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -158,40 +143,24 @@ public class InscripcionDAO implements IInscripcionDAO {
                 alu = new AlumnoDAO();
                 c = new CursoDAO();
                 Alumno alumno = alu.recuperarPorId(rs.getInt("alumno_id"));
-                Curso curso = c.recuperarPorId(rs.getInt("curso_id"));
+                Curso curso = c.recuperarCursoPorId(rs.getInt("curso_id"));
 
                 String nUsuario = alumno.getNombreUsuario();
                 String nCurso = curso.getNombreCurso();
-                Inscripcion inscripto = new Inscripcion(nUsuario, nCurso, rs.getInt("anio"));
-                inscripto.setId(rs.getInt("id"));
-                inscripciones.add(inscripto);
+                Inscripcion insc = new Inscripcion(
+                        nUsuario,
+                        nCurso,
+                        rs.getInt("anio")
+                );
+                insc.setId(rs.getInt("id"));
+                insc.setCondicion(Condicion.valueOf(rs.getString("condicion")));
+                insc.setEstadoInscripcion(rs.getBoolean("activo"));
+                inscripciones.add(insc);
             }
         } catch (SQLException | DAOException e) {
             e.printStackTrace();
         }
         return inscripciones;
-    }
-
-    public void actualizarEstadoInscripcion(int id, String estado) {
-        String sql = "UPDATE inscripciones SET condicion = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, estado);
-            stmt.setInt(2, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void actualizarEstadoActivo(int id, boolean estado){
-        String sql = "UPDATE inscripciones SET activo = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setBoolean(1, estado);
-            stmt.setInt(2,id);
-            stmt.executeQuery();
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -210,16 +179,19 @@ public class InscripcionDAO implements IInscripcionDAO {
                 c = new CursoDAO();
 
                 Alumno alumno = alu.recuperarPorId(idAlumno);
-                Curso curso = c.recuperarPorId(idCurso);
+                Curso curso = c.recuperarCursoPorId(idCurso);
 
                 String nombreUsuario = alumno.getNombre();
                 String nombreCurso = curso.getNombreCurso();
 
-                inscripciones.add(new Inscripcion(
+                Inscripcion insc = new Inscripcion(
                         nombreUsuario,
                         nombreCurso,
                         rs.getInt("anio")
-                ));
+                );
+                insc.setCondicion(Condicion.valueOf(rs.getString("condicion")));
+                insc.setEstadoInscripcion(rs.getBoolean("activo"));
+                inscripciones.add(insc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -227,6 +199,50 @@ public class InscripcionDAO implements IInscripcionDAO {
             throw new RuntimeException(e);
         }
         return inscripciones;
+    }
+
+    public void actualizarEstadoInscripcion(int id, String estado) {
+        String sql = "UPDATE inscripciones SET condicion = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, estado);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void actualizarAnio(Inscripcion inscripcion) {
+        int idAlumno = obtenerIdAlumno(inscripcion.getNombreUsuario());
+        int idCurso = obtenerIdCurso(inscripcion.getNombreCurso());
+        System.out.println("ID Alumno: " + idAlumno);
+        System.out.println("ID Curso: " + idCurso);
+        if (idAlumno == -1 || idCurso == -1) {
+            System.out.println("Error: Alumno o curso no encontrado.");
+            return;
+        }
+
+        String sql = "UPDATE inscripciones SET anio = ? WHERE alumno_id = ? AND curso_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, inscripcion.getAnio());
+            stmt.setInt(2, idAlumno);
+            stmt.setInt(3, idCurso);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void actualizarEstadoActivo(int id, boolean estado){
+        String sql = "UPDATE inscripciones SET activo = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setBoolean(1, estado);
+            stmt.setInt(2,id);
+            stmt.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     private int obtenerIdAlumno(String nombreUsuario) {

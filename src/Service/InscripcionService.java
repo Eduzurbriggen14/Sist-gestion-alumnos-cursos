@@ -2,6 +2,7 @@ package Service;
 
 import DAO.*;
 import Entidades.Alumno;
+import Entidades.Curso;
 import Entidades.Inscripcion;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class InscripcionService {
     // Método para inscribir a un alumno en un curso
     public boolean inscribirAlumnoEnCurso(String nombreUsuario, String nombreCurso, int anio) throws DAOException {
         try {
-            if (!puedeInscribirseEnCurso(nombreUsuario, nombreCurso)) {
+            if (!puedeInscribirseEnCurso(nombreUsuario, nombreCurso, anio)) {
                 return false;
             }
         } catch (DAOException e) {
@@ -38,31 +39,41 @@ public class InscripcionService {
     }
 
     // Método para verificar si el alumno puede inscribirse en el curso
-    public boolean puedeInscribirseEnCurso(String nombreUsuario, String nombreCurso) throws DAOException {
+    public boolean puedeInscribirseEnCurso(String nombreUsuario, String nombreCurso, int anio) throws DAOException {
         // Obtener el alumno
         Alumno alumno = alumnoDAO.recuperar(nombreUsuario);
+        Curso curso = cursoDAO.recuperar(nombreCurso);
+        System.out.println("cupo en el curso "+nombreCurso+ curso.getCupo());
 
 
         // Si el alumno no existe, no puede inscribirse
-        if (alumno == null) {
-            System.out.println("El alumno no existe.");
+        if (alumno == null || curso == null) {
+            System.out.println("El alumno/curso no existe.");
             return false;
         }
-
-
+        if (curso.getCupo() < 1){
+            System.out.println("No hay cupos");
+            return false;
+        }
         List<Inscripcion> inscripciones = inscripcionDAO.obtenerPorAlumno(nombreUsuario);
         for (Inscripcion inscripcion : inscripciones) {
-            if (inscripcion.getNombreCurso().equalsIgnoreCase(nombreCurso)) {
-                System.out.println("El alumno ya está inscrito en este curso.");
+            if (inscripcion.getNombreCurso().equalsIgnoreCase(nombreCurso) && inscripcion.getAnio()== anio) {
+                System.out.println("El alumno ya está inscrito en este curso en el anio: "+ anio);
                 return false;
             }
+
         }
 
         if (inscripciones.size() >= alumno.getLimiteCursos()) {
             System.out.println("El alumno ha alcanzado el límite de cursos.");
             return false;
         }
+
+
         System.out.println("El alumno cumple con los requisitos de inscripción.");
+        curso.setCupo(curso.getCupo()- 1);
+        cursoDAO.modificar(curso);
+
         return true;
     }
 

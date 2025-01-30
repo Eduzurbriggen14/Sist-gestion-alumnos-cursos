@@ -125,7 +125,6 @@ public class NotasPorCurso extends JFrame {
             id_inscripcion = inscId.getId();
             CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
             List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscripcion);
-            //System.out.println("Calificacion inscripcion desde bbdd" +calificaciones);
 
             // Ordenar las calificaciones
             List<CalificacionInscripcion> notasOrdenadas = new ArrayList<>(calificaciones);
@@ -164,7 +163,7 @@ public class NotasPorCurso extends JFrame {
             double promedio = (contadorNotas > 0) ? sumaNotas / contadorNotas : 0;
             String condicion;
             if (contadorNotas == 0) {
-                condicion = "S/N";
+                condicion = Condicion.SIN_NOTA.name();
             } else if (contadorNotas < 2) {
                 condicion = Condicion.CURSANDO.name();
             } else if (contadorNotas == 2) {
@@ -202,6 +201,7 @@ public class NotasPorCurso extends JFrame {
             inscripcionDAO.actualizarEstadoInscripcion(id_inscripcion, condicion);
 
             if (condicion.equals(Condicion.DESAPROBADO.name()) || condicion.equals(Condicion.APROBADO.name())) {
+                System.out.println("antes de actualizar estado de inscripcion");
                 inscripcionDAO.actualizarEstadoActivo(id_inscripcion, false);
             }
 

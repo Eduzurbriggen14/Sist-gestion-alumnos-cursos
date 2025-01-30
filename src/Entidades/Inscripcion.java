@@ -5,7 +5,8 @@ public class Inscripcion {
     private String nombreUsuario;
     private String nombreCurso;
     private int anio;
-    private String estadoInscripcion;
+    private Condicion condicion;
+    private boolean estadoInscripcion;
 
     // Constructor, getters y setters
     public Inscripcion(String nombreUsuario, String nombreCurso, int anio) {
@@ -50,11 +51,19 @@ public class Inscripcion {
         this.anio = anio;
     }
 
-    public String getEstadoInscripcion() {
+    public Condicion getCondicion() {
+        return condicion;
+    }
+
+    public void setCondicion(Condicion condicion) {
+        this.condicion = condicion;
+    }
+
+    public boolean isEstadoInscripcion() {
         return estadoInscripcion;
     }
 
-    public void setEstadoInscripcion(String estadoInscripcion) {
+    public void setEstadoInscripcion(boolean estadoInscripcion) {
         this.estadoInscripcion = estadoInscripcion;
     }
 }

@@ -13,5 +13,7 @@ public interface ICursoDAO {
     public Curso recuperar(String nombreCurso)throws DAOException;
     public List<Curso> recuperarTodos()throws DAOException;
     public int recuperarIdCurso(String nombreCurso) throws DAOException;
-    public Curso recuperarPorId(int id) throws DAOException;
+    public Curso recuperarCursoPorId(int id) throws DAOException;
+    public void agregarPromocionACurso(int id_curso, int id_promocion);
+    public boolean recuperarPromocionCurso(int id_curso) throws DAOException;
 }

@@ -8,7 +8,7 @@ public class Curso {
     private String descripcionCurso;
     private int cupo;
     private double precioCurso;
-    private double notaAprobacion;
+    private double notaAprobacion = 6;
     private Promocion promocionCurso;
     private Map<Alumno, Double> calificaciones;
 

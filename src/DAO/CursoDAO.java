@@ -65,7 +65,7 @@ public class CursoDAO implements ICursoDAO {
             ps.setString(1, curso.getDescripcionCurso());
             ps.setInt(2, curso.getCupo());
             ps.setDouble(3, curso.getPrecioCurso());
-            ps.setString(4, curso.getNombreCurso()); // El nombre va al final para la condición WHERE
+            ps.setString(4, curso.getNombreCurso());
 
             ps.executeUpdate();
             System.out.println("Curso modificado correctamente");
@@ -121,6 +121,7 @@ public class CursoDAO implements ICursoDAO {
                         rs.getInt("cupo"),
                         rs.getDouble("precioCurso")
                 );
+                curso.setId(rs.getInt("id"));
                 cursos.add(curso);
             }
 
@@ -154,7 +155,7 @@ public class CursoDAO implements ICursoDAO {
     }
 
     @Override
-    public Curso recuperarPorId(int id) throws DAOException {
+    public Curso recuperarCursoPorId(int id) throws DAOException {
         String sql = "SELECT * FROM curso WHERE id = ?";
         Curso curso = null;
 
@@ -180,5 +181,44 @@ public class CursoDAO implements ICursoDAO {
         return curso;
     }
 
+    @Override
+    public void agregarPromocionACurso(int id_curso, int id_promocion) {
+        String sql = "UPDATE curso SET promocion_id = ? WHERE id =? ";
 
+        try (Connection connection = DBConfig.getConexion();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1,id_promocion);
+            ps.setInt(2,id_curso);
+            ps.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean recuperarPromocionCurso(int id_curso) throws DAOException {
+        String sql = "SELECT p.nombre_promocion, p.descuento " +
+                "FROM curso c " +
+                "INNER JOIN promocion p ON c.promocion_id = p.id " +
+                "WHERE c.id = ?";
+
+        try (Connection connection = DBConfig.getConexion();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id_curso);
+
+            try (ResultSet rs = statement.executeQuery()) {
+
+                if (rs.next()) {
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Error al verificar si el curso tiene una promoción", e);
+        }
+
+        return false;  // Si no se encuentra, el curso no tiene una promoción
+    }
 }

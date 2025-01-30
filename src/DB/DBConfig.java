@@ -158,7 +158,9 @@ public class DBConfig {
                     "nombreCurso VARCHAR(100) NOT NULL UNIQUE, " +
                     "descripcionCurso TEXT, " +
                     "cupo INT NOT NULL, " +
-                    "precioCurso DECIMAL(10, 2) NOT NULL " +
+                    "precioCurso DECIMAL(10, 2) NOT NULL, " +
+                    "promocion_id INT, " +
+                    "FOREIGN KEY (promocion_id) REFERENCES promocion(id) "+
                     ");";
             stmt.executeUpdate(sql);
             System.out.println("Tabla 'curso' creada con éxito.");
@@ -286,7 +288,41 @@ public class DBConfig {
                 }
             }
         }
+    }
 
+    public static void creatTablaPromocion(){
+        Connection conn = getConexion();
+        Statement stmt = null;
+
+        try {
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS promocion (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "nombre_promocion VARCHAR(35) NOT NULL, " +
+                    "descripcion VARCHAR(100), " +
+                    "descuento DECIMAL(10, 2) NOT NULL " +
+                    ");";
+            stmt.executeUpdate(sql);
+            System.out.println("Tabla 'PROMOCION' creada con éxito.");
+        } catch (SQLException e) {
+            System.err.println("Error al crear la tabla 'PROMOCION': " + e.getMessage());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar el statement: " + e.getMessage());
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

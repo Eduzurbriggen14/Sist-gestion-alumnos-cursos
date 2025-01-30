@@ -4,6 +4,7 @@ public enum Condicion {
     APROBADO,
     DESAPROBADO,
     CURSANDO,
-    RECUPERATORIO
+    RECUPERATORIO,
+    SIN_NOTA
 
 }

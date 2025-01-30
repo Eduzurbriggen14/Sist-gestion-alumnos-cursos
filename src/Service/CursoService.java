@@ -69,11 +69,23 @@ public class CursoService {
 
     public Curso recuperarPorId(int idCurso) throws ServiceException {
         try {
-            return cursoDAO.recuperarPorId(idCurso);
+            return cursoDAO.recuperarCursoPorId(idCurso);
         } catch (DAOException e) {
             e.printStackTrace();
             throw new ServiceException("AlumnoService.RecuperarPorID: " + e.getMessage());
         }
+    }
+
+    public void agregarPromocionACurso(int id_curso, int id_promocion){
+        cursoDAO.agregarPromocionACurso(id_curso, id_promocion);
+    }
+
+    public boolean recuperarPromocionCurso(int id_curso) throws DAOException {
+        if (cursoDAO.recuperarPromocionCurso(id_curso)){
+            return true;
+        }
+        return false;
+
     }
 }
 
