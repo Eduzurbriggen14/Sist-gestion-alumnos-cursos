@@ -83,4 +83,29 @@ public class PromocionDAO implements IPromocionDAO {
             e.printStackTrace();
         }
     }
+
+    public Promocion obtenerPromocionPorId(int id) throws DAOException {
+        String sql = "SELECT * FROM promocion WHERE id = ?";
+        Promocion promocion = null;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    promocion = new Promocion();
+                    promocion.setId(rs.getInt("id"));
+                    promocion.setNombrePromocion(rs.getString("nombre_promocion"));
+                    promocion.setDescripcionPromocion(rs.getString("descripcion"));
+                    promocion.setDescuentoPorPromocion(rs.getDouble("descuento"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error SQL al obtener la promoción: " + e.getMessage(), e);
+        }
+
+        return promocion;
+    }
+
+
+
 }

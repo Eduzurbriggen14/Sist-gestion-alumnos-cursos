@@ -1,5 +1,9 @@
 package GUI;
 
+import DAO.DAOException;
+import Entidades.Promocion;
+import Service.PromocionService;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -8,15 +12,13 @@ import java.util.Map;
 
 public class ReportePanel extends JPanel {
 
-    public ReportePanel(List<Map<String, Object>> reporteDatos) {
+    public ReportePanel(List<Map<String, Object>> reporteDatos) throws DAOException {
         setLayout(new BorderLayout());
 
-        // Crear un panel para las tablas
         JPanel panelTablas = new JPanel();
         panelTablas.setLayout(new BoxLayout(panelTablas, BoxLayout.Y_AXIS));
 
         double totalGeneralRecaudado = 0;
-
         String cursoActual = null;
         DefaultTableModel modeloTabla = null;
         double totalCursoRecaudado = 0;
@@ -25,6 +27,14 @@ public class ReportePanel extends JPanel {
             String curso = (String) fila.get("cursoNombre");
             String alumno = (fila.get("alumnoNombre") != null) ? (String) fila.get("alumnoNombre") : null;
             double precioCurso = (double) fila.get("precioCurso");
+            Integer promocionId = (Integer) fila.get("promocion_id");
+            int id_promocion = (promocionId != null) ? promocionId.intValue() : 0;
+            System.out.println("promocion id: " + id_promocion);
+
+            PromocionService promocionService = new PromocionService();
+            Promocion promo = promocionService.obtenerPromocionPorId(id_promocion);
+
+
             Object abonoObject = fila.get("abonoAlumno");
             boolean tieneAbono = (abonoObject != null && (int) abonoObject == 1);  // Verifica si tiene abono
 
@@ -43,8 +53,20 @@ public class ReportePanel extends JPanel {
             }
 
             // Solo agregar filas si hay inscripciones
+            double precioPorAlumno;
             if (alumno != null) {
-                double precioPorAlumno = tieneAbono ? 0.0: precioCurso;
+                if (tieneAbono){
+                    precioPorAlumno = 0.0;
+                }
+                else{
+                    if (promo != null){
+                        double descuento = promo.getDescuentoPorPromocion();
+                        precioPorAlumno = precioCurso * (1 - descuento / 100);
+
+                    }else{
+                        precioPorAlumno = precioCurso;
+                    }
+                }
                 modeloTabla.addRow(new Object[]{alumno, precioPorAlumno});
                 totalCursoRecaudado += precioPorAlumno;
                 totalGeneralRecaudado += precioPorAlumno;
@@ -108,7 +130,7 @@ public class ReportePanel extends JPanel {
         panelTablas.add(panelCurso);
     }
     // Método estático para mostrar el reporte en una ventana JFrame
-    public static void mostrarReporteEnVentana(List<Map<String, Object>> reporteDatos) {
+    public static void mostrarReporteEnVentana(List<Map<String, Object>> reporteDatos) throws DAOException {
         JFrame frameReporte = new JFrame("Reporte de Cursos");
         frameReporte.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameReporte.setSize(800, 600);

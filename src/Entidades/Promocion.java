@@ -7,6 +7,8 @@ public class Promocion {
     private String descripcionPromocion;
     private double descuentoPorPromocion;
 
+    public Promocion(){}
+
     public Promocion(String nombrePromocion,String descripcionPromocion, double descuentoPorPromocion) {
         this.nombrePromocion = nombrePromocion;
         this.descripcionPromocion = descripcionPromocion;

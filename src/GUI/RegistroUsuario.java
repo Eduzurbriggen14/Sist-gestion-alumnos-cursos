@@ -162,7 +162,7 @@ public class RegistroUsuario extends JFrame {
                         JOptionPane.showMessageDialog(null, "Tipo de usuario no válido.");
                         break;
                 }
-                new Login();
+                new AdminPanel().setVisible(true);
                 dispose();
             }
         });

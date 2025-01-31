@@ -1,6 +1,9 @@
 package GUI;
 
+import DAO.DAOException;
 import DAO.ReporteDAO;
+import Entidades.Promocion;
+import Service.PromocionService;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -15,7 +18,7 @@ public class GraficoReporte extends JPanel {
 
     public GraficoReporte() {
         ReporteDAO reporteDAO = new ReporteDAO();
-        List<Map<String , Object>> reporteDatos = reporteDAO.obtenerReporteGrafico();
+        List<Map<String, Object>> reporteDatos = reporteDAO.obtenerReporteCursos();
         setLayout(new BorderLayout());
 
         if (reporteDatos == null || reporteDatos.isEmpty()) {
@@ -26,16 +29,51 @@ public class GraficoReporte extends JPanel {
             return;
         }
 
+        double totalCursoRecaudado = 0;
+        String cursoActual = null;
+
         // Crear dataset para el gráfico
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
         for (Map<String, Object> fila : reporteDatos) {
             if (fila.containsKey("cursoNombre") && fila.containsKey("totalRecaudado")) {
                 try {
                     String curso = (String) fila.get("cursoNombre");
-                    double total = (Double) fila.get("totalRecaudado");
-                    dataset.addValue(total, "Ingresos", curso);
+                    double precioCurso = (double) fila.get("precioCurso");
+                    Integer promocionId = (Integer) fila.get("promocion_id");
+                    int id_promocion = (promocionId != null) ? promocionId.intValue() : 0;
+
+                    PromocionService promocionService = new PromocionService();
+                    Promocion promo = promocionService.obtenerPromocionPorId(id_promocion);
+
+                    Object abonoObject = fila.get("abonoAlumno");
+                    boolean tieneAbono = (abonoObject != null && (int) abonoObject == 1);  // Verifica si tiene abono
+
+                    // Si el curso cambia o es el primer curso
+                    if (!curso.equals(cursoActual)) {
+                        cursoActual = curso;
+                        totalCursoRecaudado = 0;
+                    }
+
+                    double precioPorAlumno = 0;
+                    if (tieneAbono) {
+                        precioPorAlumno = 0.0;
+                    } else {
+                        if (promo != null) {
+                            double descuento = promo.getDescuentoPorPromocion();
+                            precioPorAlumno = precioCurso * (1 - descuento / 100);
+                        } else {
+                            precioPorAlumno = precioCurso;
+                        }
+                    }
+
+                    totalCursoRecaudado += precioPorAlumno;
+                    dataset.addValue(totalCursoRecaudado, "Ingresos", curso);
+
                 } catch (ClassCastException | NumberFormatException e) {
                     System.err.println("Error al procesar fila: " + fila);
+                } catch (DAOException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 System.err.println("Fila no contiene las claves esperadas: " + fila);
@@ -62,6 +100,6 @@ public class GraficoReporte extends JPanel {
         // Agregar el gráfico al panel
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(800, 600));
-        add(chartPanel);
+        add(chartPanel, BorderLayout.CENTER);
     }
 }

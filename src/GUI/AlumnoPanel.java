@@ -3,31 +3,25 @@ package GUI;
 import Entidades.Alumno;
 import Entidades.Sesion;
 import Entidades.UsuarioSesion;
-import Service.AlumnoCursoService;
 import Service.AlumnoService;
 import Service.ServiceException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 
 public class AlumnoPanel extends JFrame {
     private JButton verNotas;
     private JButton verCursos;
-    private JButton inscribirseCurso; // Nuevo botón
     private JButton editarMisDatos; // Nuevo botón para editar datos
-    private Connection conexion;
-    private AlumnoCursoService alumnoCursoService;
     private AlumnoService alu;
 
     public AlumnoPanel() {
-        this.conexion = conexion;
         setTitle("Panel de Alumno");
-        setSize(300, 250);  // Ajusta el tamaño de la ventana para incluir el nuevo botón
+        setSize(300, 200);  // Ajusta el tamaño de la ventana para eliminar el botón inscribirse
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        alumnoCursoService = new AlumnoCursoService();
+        alu = new AlumnoService();
         JPanel panel = new JPanel();
         add(panel);
         placeComponents(panel);
@@ -45,18 +39,15 @@ public class AlumnoPanel extends JFrame {
         verCursos.setBounds(10, 50, 150, 25);
         panel.add(verCursos);
 
-        inscribirseCurso = new JButton("Inscribirme a Curso");
-        inscribirseCurso.setBounds(10, 80, 150, 25);
-        panel.add(inscribirseCurso);
-
-        editarMisDatos = new JButton("Editar Mis Datos");  // Nuevo botón para editar datos
-        editarMisDatos.setBounds(10, 110, 150, 25); // Ajusta la posición del nuevo botón
+        editarMisDatos = new JButton("Editar Mis Datos");
+        editarMisDatos.setBounds(10, 80, 150, 25); // Ajusta la posición de los botones
         panel.add(editarMisDatos);
 
         verNotas.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lógica para mostrar las notas del alumno
+                new VerNotasUsuario().setVisible(true);
+                dispose();
             }
         });
 
@@ -67,7 +58,6 @@ public class AlumnoPanel extends JFrame {
                 System.out.println("Usuario actual: " + usuarioActual);
 
                 if (usuarioActual != null) {
-
                     System.out.println("Usuario autenticado. Abriendo ListarCursosView...");
                     ListarCursos lc = new ListarCursos();
                     lc.setVisible(true);
@@ -79,22 +69,12 @@ public class AlumnoPanel extends JFrame {
             }
         });
 
-        inscribirseCurso.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Lógica para inscribir al alumno a un curso
-                // Puedes abrir una nueva ventana o realizar alguna acción aquí
-                JOptionPane.showMessageDialog(AlumnoPanel.this, "Inscripción a curso realizada.");
-            }
-        });
-
-        editarMisDatos.addActionListener(new ActionListener() {  // Acción del botón Editar Mis Datos
+        editarMisDatos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UsuarioSesion us = Sesion.getUsuarioSesion();
                 if (us != null){
                     String nombreUsuario = us.getNombreUsuario();
-                    alu = new AlumnoService();
                     try {
                         Alumno alumno = alu.recuperarPorNombreUsuario(nombreUsuario);
                         EditarDatosAlumno editar = new EditarDatosAlumno(alumno);
@@ -104,7 +84,6 @@ public class AlumnoPanel extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 }
-
             }
         });
     }

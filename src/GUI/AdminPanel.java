@@ -75,7 +75,11 @@ public class AdminPanel extends JFrame {
                     return;
                 }
 
-                ReportePanel.mostrarReporteEnVentana(listaReporte);
+                try {
+                    ReportePanel.mostrarReporteEnVentana(listaReporte);
+                } catch (DAOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 

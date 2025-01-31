@@ -5,6 +5,7 @@ import Entidades.Alumno;
 import Entidades.Curso;
 import Entidades.Inscripcion;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class InscripcionService {
@@ -40,22 +41,33 @@ public class InscripcionService {
 
     // Método para verificar si el alumno puede inscribirse en el curso
     public boolean puedeInscribirseEnCurso(String nombreUsuario, String nombreCurso, int anio) throws DAOException {
-        // Obtener el alumno
         Alumno alumno = alumnoDAO.recuperar(nombreUsuario);
         Curso curso = cursoDAO.recuperar(nombreCurso);
         System.out.println("cupo en el curso "+nombreCurso+ curso.getCupo());
 
-
-        // Si el alumno no existe, no puede inscribirse
+        //si el alumno o curso no existe retorno
         if (alumno == null || curso == null) {
             System.out.println("El alumno/curso no existe.");
             return false;
         }
+        //Cursos disponibles
         if (curso.getCupo() < 1){
             System.out.println("No hay cupos");
             return false;
         }
+        int anioActual = LocalDate.now().getYear();
+
         List<Inscripcion> inscripciones = inscripcionDAO.obtenerPorAlumno(nombreUsuario);
+
+        int inscripcionesAnioActual = (int) inscripciones.stream()
+                .filter(inscripcion -> inscripcion.getAnio() == anioActual)
+                .count();
+
+        if (inscripcionesAnioActual >= alumno.getLimiteCursos()) {
+            System.out.println("El alumno ha alcanzado el límite de cursos.");
+            return false;
+        }
+
         for (Inscripcion inscripcion : inscripciones) {
             if (inscripcion.getNombreCurso().equalsIgnoreCase(nombreCurso) && inscripcion.getAnio()== anio) {
                 System.out.println("El alumno ya está inscrito en este curso en el anio: "+ anio);
@@ -63,17 +75,9 @@ public class InscripcionService {
             }
 
         }
-
-        if (inscripciones.size() >= alumno.getLimiteCursos()) {
-            System.out.println("El alumno ha alcanzado el límite de cursos.");
-            return false;
-        }
-
-
         System.out.println("El alumno cumple con los requisitos de inscripción.");
         curso.setCupo(curso.getCupo()- 1);
         cursoDAO.modificar(curso);
-
         return true;
     }
 

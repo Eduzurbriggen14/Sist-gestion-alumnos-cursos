@@ -219,6 +219,6 @@ public class CursoDAO implements ICursoDAO {
             throw new DAOException("Error al verificar si el curso tiene una promoción", e);
         }
 
-        return false;  // Si no se encuentra, el curso no tiene una promoción
+        return false;
     }
 }

@@ -140,29 +140,53 @@ public class TablaUsuario extends JFrame {
         public Object getCellEditorValue() {
             if (clicked) {
                 int row = userTable.getSelectedRow();
+                if (row < 0) {
+                    clicked = false;
+                    return label;
+                }
+
                 String nombreUsuario = tableModel.getValueAt(row, 0).toString();
+
                 if (tipo.equalsIgnoreCase("alumno")) {
                     alu = new AlumnoService();
                     try {
                         alu.eliminar(nombreUsuario);
-                        cargarTablaAlumno(alu.recuperarTodos());
+                        JOptionPane.showMessageDialog(null, "Usuario eliminado: " + nombreUsuario);
+                        // Usamos invokeLater para actualizar la tabla después de que termine la edición
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                cargarTablaAlumno(alu.recuperarTodos());
+                            } catch (ServiceException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     } catch (ServiceException e) {
-                        throw new RuntimeException(e);
+                        JOptionPane.showMessageDialog(null, "Error al eliminar usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else if (tipo.equalsIgnoreCase("profesor")) {
                     prof = new ProfesorService();
                     try {
                         prof.eliminar(nombreUsuario);
-                        cargarTablaProfesor(prof.recuperarTodos());
+                        JOptionPane.showMessageDialog(null, "Usuario eliminado: " + nombreUsuario);
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                cargarTablaProfesor(prof.recuperarTodos());
+                            } catch (ServiceException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     } catch (ServiceException e) {
-                        throw new RuntimeException(e);
+                        JOptionPane.showMessageDialog(null, "Error al eliminar usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                JOptionPane.showMessageDialog(null, "Eliminando usuario: " + nombreUsuario);
             }
+
             clicked = false;
-            return label;
+            return label; // NO llamamos a stopCellEditing() aquí
         }
+
+
+
 
         @Override
         public boolean stopCellEditing() {

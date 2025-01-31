@@ -88,6 +88,7 @@ public class Curso {
         this.calificaciones = calificaciones;
     }
 
+
     @Override
     public String toString() {
         return this.nombreCurso ;

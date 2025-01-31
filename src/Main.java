@@ -9,11 +9,6 @@ public class Main {
 
         DBConfig con = new DBConfig();
         DBConfig.getConexion();
-        
-
-
-
-
         Login log = new Login();
 
 

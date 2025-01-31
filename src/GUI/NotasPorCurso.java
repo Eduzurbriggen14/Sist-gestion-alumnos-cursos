@@ -79,9 +79,11 @@ public class NotasPorCurso extends JFrame {
         JPanel panelBoton = new JPanel();
         panelBoton.add(btnVolver);
 
+        JScrollPane scrollPane = new JScrollPane(panelPrincipal); // Se envuelve el panelPrincipal en un JScrollPane
+        scrollPane.setPreferredSize(new Dimension(750, 400));
         // Añadir el panel principal
         add(panelCombo, BorderLayout.NORTH);
-        add(panelPrincipal, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(panelBoton, BorderLayout.SOUTH);
     }
 
@@ -167,9 +169,13 @@ public class NotasPorCurso extends JFrame {
             } else if (contadorNotas < 2) {
                 condicion = Condicion.CURSANDO.name();
             } else if (contadorNotas == 2) {
-                condicion = (nota1 >= 6.0 && nota2 >= 6.0) ?
-                        Condicion.APROBADO.name() :
-                        Condicion.RECUPERATORIO.name();
+                if (nota1 < 6 && nota2 < 6) {
+                    condicion = Condicion.DESAPROBADO.name();
+                }else{
+                    condicion = (nota1 >= 6.0 && nota2 >= 6.0) ?
+                            Condicion.APROBADO.name() :
+                            Condicion.RECUPERATORIO.name();
+                }
             } else {
                 if ((nota1 >= 6.0 || nota2 >= 6.0) && recuperatorio >= 6.0) {
                     condicion = Condicion.APROBADO.name();

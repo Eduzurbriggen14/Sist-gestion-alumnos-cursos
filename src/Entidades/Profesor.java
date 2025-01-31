@@ -24,4 +24,6 @@ public class Profesor extends Usuario{
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
     }
+
+
 }

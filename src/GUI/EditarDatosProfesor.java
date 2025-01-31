@@ -51,7 +51,8 @@ public class EditarDatosProfesor extends JFrame {
 
         userNameField = new JTextField(20);
         userNameField.setBounds(100, 60, 250, 25);
-        userNameField.setText(usuarioActual.getNombreUsuario()); // Cargar el nombre de usuario actual
+        userNameField.setText(usuarioActual.getNombreUsuario());
+        userNameField.setEditable(false);
         panel.add(userNameField);
 
         // Etiqueta y campo de texto para Email

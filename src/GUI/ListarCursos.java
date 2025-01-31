@@ -1,13 +1,10 @@
 package GUI;
 
 import Entidades.*;
-import Service.AlumnoCursoService;
-import Service.AlumnoService;
 import Service.CursoService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.sql.Connection;
 import java.util.List;
@@ -17,15 +14,11 @@ public class ListarCursos extends JFrame {
     private CursoService cursoService;
     private JTable tablaCursos;
     private Connection conexion;
-    private AlumnoCursoService alumnoCursoService;
-    private AlumnoService alumnoService;
 
     public ListarCursos() {
         // Inicializar el DAO y servicios
         this.cursoService = new CursoService();
         this.conexion = conexion;
-        this.alumnoCursoService = new AlumnoCursoService();
-        this.alumnoService = new AlumnoService();
 
         // Configurar la ventana principal
         setTitle("Cursos Disponibles");
@@ -63,92 +56,21 @@ public class ListarCursos extends JFrame {
 
     private void actualizarTabla(List<Curso> cursos) {
         // Definir las columnas de la tabla
-        String[] columnNames = {"Curso", "Descripción", "Cupo", "Precio", "Semestre", "Año", "Inscribirse"};
+        String[] columnNames = {"Curso", "Descripción", "Cupo", "Precio"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
-        // Rellenar la tabla con los cursos y botones
+        // Rellenar la tabla con los cursos
         for (Curso curso : cursos) {
-            Object[] row = new Object[7];
+            Object[] row = new Object[4];  // Solo 4 columnas ahora
             row[0] = curso.getNombreCurso();
             row[1] = curso.getDescripcionCurso();
             row[2] = curso.getCupo();
             row[3] = curso.getPrecioCurso();
-            row[4] = "Inscribirse"; // Texto del botón en la tabla
 
             model.addRow(row);
         }
 
         // Asignar el modelo de la tabla
         tablaCursos.setModel(model);
-
-        // Configurar el render y el editor de la columna de botones
-        tablaCursos.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
-
-        // Para cada fila, asignar un ButtonEditor único con el objeto curso completo
-        for (int i = 0; i < cursos.size(); i++) {
-            final Curso curso = cursos.get(i); // Obtener el objeto Curso completo
-            tablaCursos.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox(), curso, this));
-        }
-    }
-
-    private void inscribirEnCurso(Curso curso) {
-        UsuarioSesion usuarioActual = Sesion.getUsuarioSesion();
-        if (usuarioActual != null) {
-            try {
-                String nombreUsuario = usuarioActual.getNombreUsuario();
-                Alumno alumno = alumnoService.recuperarPorNombreUsuario(nombreUsuario);
-
-                alumnoCursoService.inscribirAlumnoEnCurso(alumno, curso);
-                JOptionPane.showMessageDialog(this, "Inscripción realizada al curso: " + curso.getNombreCurso());
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al realizar la inscripción: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "No hay usuario autenticado.");
-        }
-    }
-
-    // Clase para renderizar los botones en la tabla
-    private static class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText(value == null ? "" : value.toString());
-            return this;
-        }
-    }
-
-    // Clase para editar el botón (gestionar el clic)
-    private class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
-        private Curso curso;  // Ahora guardamos el objeto curso completo
-        private ListarCursos listarCursos;
-
-        public ButtonEditor(JCheckBox checkBox, Curso curso, ListarCursos listarCursos) {
-            super(checkBox);
-            this.curso = curso;  // Asignar el objeto curso completo
-            this.listarCursos = listarCursos;
-            button = new JButton("Inscribirse");
-            button.setOpaque(true);
-
-            button.addActionListener(e -> {
-                listarCursos.inscribirEnCurso(curso);
-                fireEditingStopped();
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return button.getText();
-        }
     }
 }

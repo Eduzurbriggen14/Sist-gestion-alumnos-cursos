@@ -28,4 +28,8 @@ public class PromocionService {
 
     }
 
+    public Promocion obtenerPromocionPorId(int id_promocion) throws DAOException {
+        return promocionDAO.obtenerPromocionPorId(id_promocion);
+    }
+
 }
