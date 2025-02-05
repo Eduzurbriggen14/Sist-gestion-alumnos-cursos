@@ -22,7 +22,7 @@ public class RegistroUsuario extends JFrame {
     private JTextField userNameField;
     private JComboBox<String> userTypeComboBox;
     private JButton registerButton;
-    private JButton cancelButton; // Nuevo botón de cancelar
+    private JButton cancelButton;
 
     private AlumnoService alumnoService;
     private ProfesorService profService;
@@ -31,7 +31,7 @@ public class RegistroUsuario extends JFrame {
 
     public RegistroUsuario() {
         setTitle("Registro de Usuario");
-        setSize(400, 300); // Tamaño de ventana aumentado
+        setSize(400, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JPanel panel = new JPanel();

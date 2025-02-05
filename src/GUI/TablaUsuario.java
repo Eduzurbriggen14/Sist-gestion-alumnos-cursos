@@ -119,8 +119,8 @@ public class TablaUsuario extends JFrame {
         public ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
             button = new JButton("Eliminar");
-            button.setBackground(Color.RED); // Establecer color de fondo en rojo
-            button.setForeground(Color.WHITE); // Establecer color del texto en blanco
+            button.setBackground(Color.RED);
+            button.setForeground(Color.WHITE);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     fireEditingStopped();
@@ -182,7 +182,7 @@ public class TablaUsuario extends JFrame {
             }
 
             clicked = false;
-            return label; // NO llamamos a stopCellEditing() aquí
+            return label;
         }
 
 

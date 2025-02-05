@@ -8,7 +8,6 @@ import Entidades.*;
 import Service.AlumnoService;
 import Service.CursoService;
 import Service.InscripcionService;
-import Service.UsuarioCursoCalificacionService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,11 +19,11 @@ import java.util.List;
 
 public class IngresoDeNotas extends JFrame {
 
-    private JComboBox<String> comboCursos; // Para seleccionar cursos
-    private JTable tablaAlumnos; // Tabla de alumnos inscritos
-    private DefaultTableModel modeloTabla; // Modelo para la tabla
+    private JComboBox<String> comboCursos;
+    private JTable tablaAlumnos;
+    private DefaultTableModel modeloTabla;
     private JButton btnAgregarCalificacion;
-    private JButton btnVolver; // Botón para volver al panel del profesor
+    private JButton btnVolver;
 
     private Connection conexion;
     private static InscripcionService inscripcionService;
@@ -46,7 +45,7 @@ public class IngresoDeNotas extends JFrame {
         JPanel panelSuperior = new JPanel(new FlowLayout());
         JLabel lblCurso = new JLabel("Seleccione Curso:");
         comboCursos = new JComboBox<>();
-        cargarCursos(); // Método para llenar el combo box con cursos
+        cargarCursos();
         panelSuperior.add(lblCurso);
         panelSuperior.add(comboCursos);
 
@@ -62,7 +61,6 @@ public class IngresoDeNotas extends JFrame {
             }
         });
 
-        // Botón para volver al panel del profesor
         btnVolver = new JButton("Volver al Panel del Profesor");
         btnVolver.addActionListener(new ActionListener() {
             @Override
@@ -72,12 +70,10 @@ public class IngresoDeNotas extends JFrame {
             }
         });
 
-        // Panel inferior para los botones
         JPanel panelInferior = new JPanel(new FlowLayout());
         panelInferior.add(btnAgregarCalificacion);
         panelInferior.add(btnVolver);
 
-        // Layout principal
         setLayout(new BorderLayout());
         add(panelSuperior, BorderLayout.NORTH);
         add(scrollTabla, BorderLayout.CENTER);
@@ -105,10 +101,8 @@ public class IngresoDeNotas extends JFrame {
 
         InscripcionService inscripcionService = new InscripcionService(inscripcionDAO, alumnoDAO, cursoDAO);
         try {
-            // Obtenemos la lista de inscripciones para el curso seleccionado
             List<Inscripcion> listaInscripciones = inscripcionDAO.obtenerPorCurso(cursoSeleccionado);
 
-            // Iteramos sobre las inscripciones y agregamos los datos a la tabla
             for (Inscripcion inscripcion : listaInscripciones) {
                 int id_usuario = alumnoDAO.obtenerIdAlumnoPorNombreUsuario(inscripcion.getNombreUsuario());
                 Object[] fila = new Object[]{

@@ -22,7 +22,7 @@ public class EditarDatosProfesor extends JFrame {
     public EditarDatosProfesor(Usuario usuario) {
         this.usuarioActual = usuario;
         setTitle("Editar Mis Datos");
-        setSize(400, 300); // Tamaño de ventana
+        setSize(400, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JPanel panel = new JPanel();
@@ -34,17 +34,15 @@ public class EditarDatosProfesor extends JFrame {
     private void placeComponents(JPanel panel) {
         panel.setLayout(null);
 
-        // Etiqueta y campo de texto para Nombre
         JLabel nameLabel = new JLabel("Nombre:");
         nameLabel.setBounds(10, 20, 80, 25);
         panel.add(nameLabel);
 
         nameField = new JTextField(20);
         nameField.setBounds(100, 20, 250, 25);
-        nameField.setText(usuarioActual.getNombre()); // Cargar el nombre actual
+        nameField.setText(usuarioActual.getNombre());
         panel.add(nameField);
 
-        // Etiqueta y campo de texto para Nombre Usuario
         JLabel userNameLabel = new JLabel("Nombre Usuario:");
         userNameLabel.setBounds(10, 60, 120, 25);
         panel.add(userNameLabel);
@@ -55,17 +53,15 @@ public class EditarDatosProfesor extends JFrame {
         userNameField.setEditable(false);
         panel.add(userNameField);
 
-        // Etiqueta y campo de texto para Email
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setBounds(10, 100, 80, 25);
         panel.add(emailLabel);
 
         emailField = new JTextField(20);
         emailField.setBounds(100, 100, 250, 25);
-        emailField.setText(usuarioActual.getCorreo()); // Cargar el email actual
+        emailField.setText(usuarioActual.getCorreo());
         panel.add(emailField);
 
-        // Etiqueta y campo de texto para Contraseña
         JLabel passwordLabel = new JLabel("Contraseña:");
         passwordLabel.setBounds(10, 140, 80, 25);
         panel.add(passwordLabel);
@@ -74,12 +70,10 @@ public class EditarDatosProfesor extends JFrame {
         passwordField.setBounds(100, 140, 250, 25);
         panel.add(passwordField);
 
-        // Botón para guardar los cambios
         saveButton = new JButton("Guardar Cambios");
         saveButton.setBounds(10, 180, 150, 25);
         panel.add(saveButton);
 
-        // Botón para cancelar
         cancelButton = new JButton("Cancelar");
         cancelButton.setBounds(170, 180, 150, 25);
         panel.add(cancelButton);

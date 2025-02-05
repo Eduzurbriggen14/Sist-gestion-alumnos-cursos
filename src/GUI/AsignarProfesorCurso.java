@@ -4,6 +4,7 @@ import DAO.DAOException;
 import DB.DBConfig;
 import Entidades.Curso;
 import Entidades.Profesor;
+import Entidades.ProfesorCurso;
 import Service.CursoService;
 import Service.ProfesorCursoService;
 import Service.ProfesorService;
@@ -69,7 +70,6 @@ public class AsignarProfesorCurso extends JFrame {
         cargarProfesoresCombo();
         cargarCursosCombo();
 
-        // Listener para el botón Asignar
         btnAsignar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,16 +77,35 @@ public class AsignarProfesorCurso extends JFrame {
                 String cursoSeleccionado = (String) comboCursos.getSelectedItem();
                 String anioTexto = txtAnio.getText();
 
-                System.out.println("profe seleccionado " +profesorSeleccionado);
-                System.out.println("Curso seleccionado " +cursoSeleccionado);
+                System.out.println("Profesor seleccionado: " + profesorSeleccionado);
+                System.out.println("Curso seleccionado: " + cursoSeleccionado);
 
                 if (profesorSeleccionado != null && cursoSeleccionado != null && !anioTexto.isEmpty()) {
                     try {
                         int anio = Integer.parseInt(anioTexto);
                         ProfesorCursoService service = new ProfesorCursoService();
-                        service.asignarCursoAProfesor(profesorSeleccionado, cursoSeleccionado, anio);
+                        List<ProfesorCurso> listaDeCursosPorProfesor = service.obtenerCursosPorProfesor(profesorSeleccionado);
+
+                        boolean cursoYaAsignado = false;
+
+                        // Verificar si el profesor ya está asignado a ese curso y año
+                        for (ProfesorCurso cursos : listaDeCursosPorProfesor) {
+                            if (cursos.getCurso().getNombreCurso().equals(cursoSeleccionado) && cursos.getAnio() == anio) {
+                                cursoYaAsignado = true;
+                                break; // No es necesario seguir buscando si ya se encontró
+                            }
+                        }
+
+                        // Si no está asignado, asignar el curso
+                        if (cursoYaAsignado) {
+                            JOptionPane.showMessageDialog(null, "El profesor ya está asignado a este curso para el año " + anio, "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            service.asignarCursoAProfesor(profesorSeleccionado, cursoSeleccionado, anio);
+                            JOptionPane.showMessageDialog(null, "Curso asignado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error al asignar el curso.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);

@@ -27,11 +27,10 @@ public class AgregarPromocion extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridLayout(3, 2, 10, 10));
 
-        // Inicializar servicios
+
         cursoService = new CursoService();
         promocionService = new PromocionService();
 
-        // Etiquetas y combobox
         add(new JLabel("Seleccionar Curso:"));
         comboCursos = new JComboBox<>();
         cargarCursos();
@@ -42,7 +41,6 @@ public class AgregarPromocion extends JFrame {
         cargarPromociones();
         add(comboPromociones);
 
-        // Botones
         btnAgregar = new JButton("Agregar");
         btnCancelar = new JButton("Cancelar");
         add(btnAgregar);
@@ -91,20 +89,20 @@ public class AgregarPromocion extends JFrame {
 
     private void cargarCursos() {
         List<Curso> cursos = cursoService.recuperarTodosLosCursos();
-        System.out.println("Cursos cargados: " + cursos.size()); // Verifica el número de cursos cargados
+        System.out.println("Cursos cargados: " + cursos.size());
 
         for (Curso curso : cursos) {
-            System.out.println("Curso ID: " + curso.getId()); // Verifica si los IDs de los cursos son correctos
+            System.out.println("Curso ID: " + curso.getId());
             comboCursos.addItem(curso);
         }
     }
 
     private void cargarPromociones() throws DAOException {
         List<Promocion> promociones = promocionService.obtenerTodasLasPromociones();
-        System.out.println("Promociones cargadas: " + promociones.size()); // Verifica el número de promociones cargadas
+        System.out.println("Promociones cargadas: " + promociones.size());
 
         for (Promocion promo : promociones) {
-            System.out.println("Promoción ID: " + promo.getId()); // Verifica si los IDs de las promociones son correctos
+            System.out.println("Promoción ID: " + promo.getId());
             comboPromociones.addItem(promo);
         }
     }

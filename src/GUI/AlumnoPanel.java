@@ -13,12 +13,12 @@ import java.awt.event.ActionListener;
 public class AlumnoPanel extends JFrame {
     private JButton verNotas;
     private JButton verCursos;
-    private JButton editarMisDatos; // Nuevo botón para editar datos
+    private JButton editarMisDatos;
     private AlumnoService alu;
 
     public AlumnoPanel() {
         setTitle("Panel de Alumno");
-        setSize(300, 200);  // Ajusta el tamaño de la ventana para eliminar el botón inscribirse
+        setSize(300, 200);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         alu = new AlumnoService();
@@ -40,7 +40,7 @@ public class AlumnoPanel extends JFrame {
         panel.add(verCursos);
 
         editarMisDatos = new JButton("Editar Mis Datos");
-        editarMisDatos.setBounds(10, 80, 150, 25); // Ajusta la posición de los botones
+        editarMisDatos.setBounds(10, 80, 150, 25);
         panel.add(editarMisDatos);
 
         verNotas.addActionListener(new ActionListener() {
@@ -61,7 +61,7 @@ public class AlumnoPanel extends JFrame {
                     System.out.println("Usuario autenticado. Abriendo ListarCursosView...");
                     ListarCursos lc = new ListarCursos();
                     lc.setVisible(true);
-                    dispose();  // Cierra el panel actual
+                    dispose();
                 } else {
                     System.out.println("No hay usuario autenticado.");
                     JOptionPane.showMessageDialog(AlumnoPanel.this, "No hay usuario autenticado.");

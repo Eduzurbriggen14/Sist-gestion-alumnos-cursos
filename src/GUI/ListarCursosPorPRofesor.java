@@ -1,19 +1,16 @@
 package GUI;
 
-import Entidades.Curso;
-import Entidades.Profesor;
-import Entidades.ProfesorCurso;
+import Entidades.*;
 import Service.ProfesorCursoService;
 import Service.ProfesorService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.util.List;
 
 public class ListarCursosPorPRofesor extends JFrame {
@@ -25,10 +22,7 @@ public class ListarCursosPorPRofesor extends JFrame {
     private ProfesorService profesorService;
     private ProfesorCursoService profesorCursoService;
 
-    private Connection conexion;
-
     public ListarCursosPorPRofesor() {
-        this.conexion = conexion;
         setTitle("Cursos por Profesor");
         setLayout(new BorderLayout());
         setSize(600, 400);
@@ -40,7 +34,7 @@ public class ListarCursosPorPRofesor extends JFrame {
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2; // Solo la columna "Acción" es editable
+                return column == 2; // Solo la columna de acción es editable
             }
         };
         model.addColumn("Nombre del Curso");
@@ -64,7 +58,7 @@ public class ListarCursosPorPRofesor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AdminPanel();
+                new AdminPanel(); // Cambia esto por el código que maneje la vuelta al panel admin
             }
         });
 
@@ -106,11 +100,13 @@ public class ListarCursosPorPRofesor extends JFrame {
                 profesorCursoService = new ProfesorCursoService();
                 List<ProfesorCurso> profesorCursos = profesorCursoService.obtenerCursosPorProfesor(profesorSeleccionado.getNombreUsuario());
                 for (ProfesorCurso profesorCurso : profesorCursos) {
-                    model.addRow(new Object[]{
-                            profesorCurso.getCurso().getNombreCurso(),
-                            profesorCurso.getAnio(),
-                            "Eliminar"
-                    });
+                    if (profesorCurso.getCurso() != null && profesorCurso.getCurso().getNombreCurso() != null) {
+                        model.addRow(new Object[]{
+                                profesorCurso.getCurso().getNombreCurso(),
+                                profesorCurso.getAnio(),
+                                "Eliminar"
+                        });
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -124,6 +120,8 @@ public class ListarCursosPorPRofesor extends JFrame {
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setText("Eliminar");
+            setBackground(Color.RED); // Establecer color de fondo en rojo
+            setForeground(Color.WHITE); // Establecer color del texto en blanco
         }
 
         @Override
@@ -132,20 +130,20 @@ public class ListarCursosPorPRofesor extends JFrame {
         }
     }
 
-    // Editor para manejar los clics en el botón
+    // Editor para el botón de eliminación
     class ButtonEditor extends DefaultCellEditor {
         private JButton button;
         private String nombreCurso;
         private int anio;
         private boolean clicked;
+        private int rowIndex; // Agregar variable para el índice de fila
 
         public ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
             button = new JButton("Eliminar");
-            button.setOpaque(true);
-
+            button.setBackground(Color.RED);
+            button.setForeground(Color.WHITE);
             button.addActionListener(new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
                     fireEditingStopped();
                 }
@@ -156,6 +154,7 @@ public class ListarCursosPorPRofesor extends JFrame {
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             nombreCurso = (String) table.getValueAt(row, 0);
             anio = (int) table.getValueAt(row, 1);
+            rowIndex = row;
             clicked = true;
             return button;
         }
@@ -165,40 +164,32 @@ public class ListarCursosPorPRofesor extends JFrame {
             if (clicked) {
                 int confirm = JOptionPane.showConfirmDialog(button, "¿Deseas eliminar el curso " + nombreCurso + " del año " + anio + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    eliminar(nombreCurso);
+                    eliminarCurso(nombreCurso);
                 }
             }
             clicked = false;
             return null;
         }
 
-        @Override
-        public boolean stopCellEditing() {
-            clicked = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
-
-        private void eliminar(String nombreCurso) {
+        private void eliminarCurso(String nombreCurso) {
             Profesor profesorSeleccionado = (Profesor) comboBoxProfesor.getSelectedItem();
-            System.out.println("profe seleccionado "+ profesorSeleccionado.getNombreUsuario());
-            System.out.println("nombre curso " + nombreCurso);
             if (profesorSeleccionado != null) {
                 try {
                     profesorCursoService = new ProfesorCursoService();
                     profesorCursoService.eliminarCursoDeProfesor(profesorSeleccionado.getNombreUsuario(), nombreCurso);
 
-                    buscarCursos();
-                    JOptionPane.showMessageDialog(button, "El profesor fue eliminado del curso con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    SwingUtilities.invokeLater(() -> {
+                        buscarCursos();
+                        JOptionPane.showMessageDialog(button, "Curso eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    });
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(button, "Error al eliminar el profesor del curso: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(button, "Error al eliminar el curso: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
+
     }
+
 }

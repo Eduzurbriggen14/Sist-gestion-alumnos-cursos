@@ -215,7 +215,6 @@ public class NotasPorCurso extends JFrame {
             JPanel panelAlumno = new JPanel();
             panelAlumno.setLayout(new BorderLayout());
 
-            // Título con nombre del alumno, promedio y condición
             String titulo = "Alumno: " + nombreUsuario + " | Promedio: " + promedio + " | Condición: " + condicion;
             JLabel labelTitulo = new JLabel(titulo);
             panelAlumno.add(labelTitulo, BorderLayout.NORTH);

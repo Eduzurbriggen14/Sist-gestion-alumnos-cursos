@@ -57,11 +57,9 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            // Log the full stack trace for debugging
             e.printStackTrace();
             throw new Exception("Error al asignar curso al profesor: " + e.getMessage(), e);
         } finally {
-            // Close resources properly
             if (stmt != null) {
                 try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
             }
@@ -103,7 +101,6 @@ public class ProfesorCursoDao implements IProfesorCursoDao {
 
         try {
 
-            // Asegúrate de que estas funciones no estén cerrando la conexión
             int idProfesor = obtenerIdProfesorPorNombreUsuario(nombreUsuarioProfesor);
             int idCurso = obtenerIdCursoPorNombre(nombreCurso);
             System.out.println("id profesor " + idProfesor + "\nid curso " + idCurso);

@@ -47,7 +47,7 @@ public class GraficoReporte extends JPanel {
                     Promocion promo = promocionService.obtenerPromocionPorId(id_promocion);
 
                     Object abonoObject = fila.get("abonoAlumno");
-                    boolean tieneAbono = (abonoObject != null && (int) abonoObject == 1);  // Verifica si tiene abono
+                    boolean tieneAbono = (abonoObject != null && (int) abonoObject == 1);
 
                     // Si el curso cambia o es el primer curso
                     if (!curso.equals(cursoActual)) {

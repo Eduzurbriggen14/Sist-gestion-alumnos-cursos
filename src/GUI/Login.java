@@ -20,6 +20,8 @@ public class Login extends JFrame {
     private JButton loginButton;
     private JButton registerButton;
     private Connection conexion;
+
+
     public Login() {
         setTitle("Inicio de Sesión");
         setSize(300, 200);
@@ -61,14 +63,12 @@ public class Login extends JFrame {
         registerButton.setBounds(10, 110, 150, 25);
         panel.add(registerButton);
 
-        // botón de inicio de sesión
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String email = emailField.getText();
                 String password = new String(passwordField.getPassword());
 
-                // Verificar credenciales
                 UsuarioSesion usuario = verificarCredenciales(email, password);
 
                 if (usuario != null) {
@@ -91,7 +91,6 @@ public class Login extends JFrame {
         });
 
 
-        //botón de registro
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,12 +133,10 @@ public class Login extends JFrame {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                // Obtener todos los campos de la base de datos, incluidos 'nombreUsuario' y 'correo'
                 String nombre = resultSet.getString("nombre");
                 String nombreUsuario = resultSet.getString("nombreUsuario");
                 String correo = resultSet.getString("correo");
 
-                // Convertir tipoStr a TipoUsuario
                 TipoUsuario tipo = TipoUsuario.valueOf(tipoStr.toUpperCase());
 
                 return new UsuarioSesion(nombre, passw, nombreUsuario, correo, tipo);

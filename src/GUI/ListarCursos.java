@@ -16,20 +16,16 @@ public class ListarCursos extends JFrame {
     private Connection conexion;
 
     public ListarCursos() {
-        // Inicializar el DAO y servicios
         this.cursoService = new CursoService();
         this.conexion = conexion;
 
-        // Configurar la ventana principal
         setTitle("Cursos Disponibles");
         setSize(600, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Crear un layout para organizar los componentes
         setLayout(new BorderLayout());
 
-        // Crear la tabla para mostrar los cursos
         tablaCursos = new JTable();
         JScrollPane scrollPane = new JScrollPane(tablaCursos);
         add(scrollPane, BorderLayout.CENTER);
@@ -61,7 +57,7 @@ public class ListarCursos extends JFrame {
 
         // Rellenar la tabla con los cursos
         for (Curso curso : cursos) {
-            Object[] row = new Object[4];  // Solo 4 columnas ahora
+            Object[] row = new Object[4];
             row[0] = curso.getNombreCurso();
             row[1] = curso.getDescripcionCurso();
             row[2] = curso.getCupo();
@@ -69,8 +65,6 @@ public class ListarCursos extends JFrame {
 
             model.addRow(row);
         }
-
-        // Asignar el modelo de la tabla
         tablaCursos.setModel(model);
     }
 }

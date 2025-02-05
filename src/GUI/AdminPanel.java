@@ -25,7 +25,7 @@ public class AdminPanel extends JFrame {
     private JButton verProfesores;
     private JButton asignarProfesorCurso;
     private JButton listadosCursosPorProfesor;
-    private JButton agregarPromocion; // Nuevo botón
+    private JButton agregarPromocion;
 
     private Connection conexion;
     private AlumnoService alu;
@@ -39,7 +39,7 @@ public class AdminPanel extends JFrame {
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 2, 10, 10)); // Distribuye los botones en filas y columnas
+        panel.setLayout(new GridLayout(5, 2, 10, 10));
         add(panel);
 
         crearUsuario = new JButton("Crear Usuario");
@@ -50,9 +50,8 @@ public class AdminPanel extends JFrame {
         verProfesores = new JButton("Ver Profesores");
         asignarProfesorCurso = new JButton("Asignar Profesor a Curso");
         listadosCursosPorProfesor = new JButton("Listado Cursos x Profesor");
-        agregarPromocion = new JButton("Agregar Promoción"); // Nuevo botón
+        agregarPromocion = new JButton("Agregar Promoción");
 
-        // Agregar botones al panel
         panel.add(crearUsuario);
         panel.add(crearCurso);
         panel.add(editarCurso);
@@ -61,9 +60,8 @@ public class AdminPanel extends JFrame {
         panel.add(verProfesores);
         panel.add(asignarProfesorCurso);
         panel.add(listadosCursosPorProfesor);
-        panel.add(agregarPromocion); // Agregamos el nuevo botón
+        panel.add(agregarPromocion);
 
-        // Listeners para los botones
         reporteCursos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -139,7 +137,6 @@ public class AdminPanel extends JFrame {
             dispose();
         });
 
-        // Acción para el nuevo botón "Agregar Promoción"
         agregarPromocion.addActionListener(e -> {
             try {
                 new AgregarPromocion().setVisible(true);

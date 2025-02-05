@@ -19,7 +19,6 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
     private CursoService cursoService;
     private Connection conn;
 
-    // Constructor de la clase donde se inicializa la conexión
     public AlumnoCursoDAO() {
         alumnoService = new AlumnoService();
         cursoService = new CursoService();
@@ -32,47 +31,39 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
         PreparedStatement stmt = null;
 
         try {
-            // Obtener la conexión a la base de datos
             connection = DBConfig.getConexion();
 
-            // Verifica si la conexión no es nula y está abierta
             if (connection == null || connection.isClosed()) {
                 throw new SQLException("La conexión a la base de datos está cerrada o no disponible.");
             }
 
-            connection.setAutoCommit(false); // Desactivar autocommit para controlar las transacciones manualmente
+            connection.setAutoCommit(false);
             int idAlumno = -1;
             int idCurso = -1;
             try {
                 idAlumno = alumnoService.recuperIdAlumno(alumno.getNombreUsuario());
                 idCurso = cursoService.recuperCursoID(curso.getNombreCurso());
             } catch (Service.ServiceException e) {
-                // Handle the exception appropriately (logging, user feedback, etc.)
                 System.out.println("An error occurred: " + e.getMessage());
             }
 
             System.out.println("id alumno "+ idAlumno);
             System.out.println("id curso "+ idCurso);
 
-            // Crear la consulta para insertar al alumno en el curso
             String sql = "INSERT INTO AlumnoCurso (alumno_id, curso_id) VALUES (?, ?)";
             stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, idAlumno ); // Asignar el ID del alumno
-            stmt.setInt(2, idCurso); // Asignar el ID del curso
+            stmt.setInt(1, idAlumno );
+            stmt.setInt(2, idCurso);
 
-            // Ejecutar la consulta de inserción
             stmt.executeUpdate();
 
-            // Hacer commit de la transacción
             connection.commit();
 
         } catch (SQLException e) {
-            // Si ocurre un error, hacer rollback
             if (connection != null) {
                 try {
                     connection.rollback();
                 } catch (SQLException rollbackEx) {
-                    // Manejar el error del rollback (si ocurre)
                     rollbackEx.printStackTrace();
                 }
             }
@@ -113,7 +104,7 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
             insertarAlumnoCurso(conn, id_alumno, id_curso);
             actualizarCupoCurso(conn, id_curso);
 
-            conn.commit();  // Si todo va bien, confirmamos la transacción
+            conn.commit();
         } catch (SQLException e) {
             try {
                 if (conn != null) {
@@ -141,7 +132,7 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
         try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
             stmtInsert.setInt(1, id_alumno);
             stmtInsert.setInt(2, id_curso);
-            stmtInsert.executeUpdate();  // Aquí puede lanzar SQLException
+            stmtInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new SQLException("Error al insertar el alumno en el curso", e);
@@ -152,7 +143,7 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
         String sqlUpdateCupo = "UPDATE curso SET cupo = cupo - 1 WHERE id_curso = ?";
         try (PreparedStatement stmtUpdateCupo = conn.prepareStatement(sqlUpdateCupo)) {
             stmtUpdateCupo.setInt(1, id_curso);
-            stmtUpdateCupo.executeUpdate();  // Aquí también puede lanzar SQLException
+            stmtUpdateCupo.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new SQLException("Error al actualizar el cupo del curso", e);
@@ -168,20 +159,19 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
              PreparedStatement psDelete = conn.prepareStatement(sqlDelete);
              PreparedStatement psUpdateCupo = conn.prepareStatement(sqlUpdateCupo)) {
 
-            conn.setAutoCommit(false); // Desactivamos el autocommit para manejar transacciones
+            conn.setAutoCommit(false);
 
             psDelete.setString(1, alumno.getNombreUsuario());
             psDelete.setString(2, curso.getNombreCurso());
-            int rowsAffected = psDelete.executeUpdate();  // Aquí puede lanzar SQLException
+            int rowsAffected = psDelete.executeUpdate();
 
             if (rowsAffected > 0) {
-                // Incrementar el cupo del curso
                 psUpdateCupo.setString(1, curso.getNombreCurso());
-                psUpdateCupo.executeUpdate();  // Aquí también puede lanzar SQLException
-                conn.commit();  // Confirmamos la transacción
+                psUpdateCupo.executeUpdate();
+                conn.commit();
                 System.out.println("Inscripción eliminada y cupo actualizado.");
             } else {
-                conn.rollback();  // Hacemos rollback si no se encuentra la inscripción
+                conn.rollback();
                 System.out.println("No se encontró la inscripción.");
             }
 
@@ -199,7 +189,7 @@ public class AlumnoCursoDAO implements IAlumnoCursoDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, nombreUsuario);
-            ResultSet rs = ps.executeQuery();  // Aquí puede lanzar SQLException
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 CursoDAO cursoDAO = new CursoDAO();

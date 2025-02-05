@@ -23,7 +23,7 @@ public class ProfesorPanel extends JFrame {
         this.conexion = conexion;
         prof = new ProfesorService();
         setTitle("Panel de Profesor");
-        setSize(300, 250); // Ajuste del tamaño de la ventana
+        setSize(300, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

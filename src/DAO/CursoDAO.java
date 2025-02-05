@@ -135,7 +135,7 @@ public class CursoDAO implements ICursoDAO {
     @Override
     public int recuperarIdCurso(String nombreCurso) throws DAOException {
         String sql = "SELECT id FROM curso WHERE nombreCurso = ?";
-        int idCurso = -1; // Valor por defecto para indicar que no se encontró el curso
+        int idCurso = -1;
 
         try (Connection connection = DBConfig.getConexion();
              PreparedStatement ps = connection.prepareStatement(sql)) {

@@ -104,7 +104,6 @@ public class RegistroCurso extends JFrame {
                 String descripcionCurso = descripcionCursoField.getText().trim();
                 String cupoStr = cupoField.getText().trim();
                 String precioCursoStr = precioCursoField.getText().trim();
-                //String anioStr = anioField.getText().trim(); // Obtener el valor del año
 
                 if (nombreCurso.isEmpty() || descripcionCurso.isEmpty() || cupoStr.isEmpty() || precioCursoStr.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados.", "Error", JOptionPane.ERROR_MESSAGE);

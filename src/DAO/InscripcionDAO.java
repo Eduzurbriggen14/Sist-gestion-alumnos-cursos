@@ -137,7 +137,7 @@ public class InscripcionDAO implements IInscripcionDAO {
 
         String sql = "SELECT * FROM inscripciones WHERE curso_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idCurso);  // ID del curso
+            stmt.setInt(1, idCurso);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 alu = new AlumnoDAO();

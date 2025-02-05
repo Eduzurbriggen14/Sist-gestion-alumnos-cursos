@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.util.List;
 
 public class EditarDatosCurso extends JFrame {
-    private JComboBox<Curso> cursoComboBox;  // Cambiado a JComboBox<Curso>
+    private JComboBox<Curso> cursoComboBox;
     private JTextField nombreCursoField;
     private JTextField descripcionCursoField;
     private JTextField cupoField;
@@ -24,7 +24,7 @@ public class EditarDatosCurso extends JFrame {
 
     public EditarDatosCurso() {
         setTitle("Editar Curso");
-        setSize(400, 350);
+        setSize(400, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         cursoService = new CursoService();
@@ -37,18 +37,15 @@ public class EditarDatosCurso extends JFrame {
     private void placeComponents(JPanel panel) {
         panel.setLayout(null);
 
-        // ComboBox para seleccionar el curso
         JLabel cursoLabel = new JLabel("Seleccionar Curso:");
         cursoLabel.setBounds(10, 20, 150, 25);
         panel.add(cursoLabel);
 
-        // ComboBox que carga todos los cursos disponibles
         cursoComboBox = new JComboBox<>();
         cargarCursos();
         cursoComboBox.setBounds(170, 20, 200, 25);
         panel.add(cursoComboBox);
 
-        // Campos para editar los datos del curso
         JLabel nombreCursoLabel = new JLabel("Nombre del Curso:");
         nombreCursoLabel.setBounds(10, 60, 150, 25);
         panel.add(nombreCursoLabel);
@@ -90,7 +87,6 @@ public class EditarDatosCurso extends JFrame {
         cancelarButton.setBounds(200, 300, 150, 25);
         panel.add(cancelarButton);
 
-        // Acción de cargar los datos del curso seleccionado
         cursoComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,11 +94,9 @@ public class EditarDatosCurso extends JFrame {
             }
         });
 
-        // Acción del botón de actualizar
         actualizarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Obtener los valores ingresados
                 String nombreCurso = nombreCursoField.getText().trim();
                 String descripcionCurso = descripcionCursoField.getText().trim();
                 String cupoStr = cupoField.getText().trim();
@@ -159,7 +153,6 @@ public class EditarDatosCurso extends JFrame {
                     semestre = Semestre.SEMESTRE_B;
                 }*/
 
-                // Crear el curso con los nuevos datos
                 Curso cursoSeleccionado = (Curso) cursoComboBox.getSelectedItem();
                 cursoSeleccionado.setNombreCurso(nombreCurso);
                 cursoSeleccionado.setDescripcionCurso(descripcionCurso);
@@ -187,12 +180,12 @@ public class EditarDatosCurso extends JFrame {
     private void cargarCursos() {
         List<Curso> cursos = cursoService.recuperarTodosLosCursos();
         for (Curso curso : cursos) {
-            cursoComboBox.addItem(curso);  // Agregar el curso completo al JComboBox
+            cursoComboBox.addItem(curso);
         }
     }
 
     private void cargarDatosCursoSeleccionado() {
-        Curso cursoSeleccionado = (Curso) cursoComboBox.getSelectedItem();  // Obtener el objeto completo
+        Curso cursoSeleccionado = (Curso) cursoComboBox.getSelectedItem();
         if (cursoSeleccionado != null) {
             nombreCursoField.setText(cursoSeleccionado.getNombreCurso());
             descripcionCursoField.setText(cursoSeleccionado.getDescripcionCurso());
