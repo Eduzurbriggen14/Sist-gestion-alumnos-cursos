@@ -15,6 +15,7 @@ import java.util.List;
 public class AgregarPromocion extends JFrame {
     private JComboBox<Curso> comboCursos;
     private JComboBox<Promocion> comboPromociones;
+    private JButton btnCrearPromocion;
     private JButton btnAgregar;
     private JButton btnCancelar;
     private CursoService cursoService;
@@ -22,11 +23,10 @@ public class AgregarPromocion extends JFrame {
 
     public AgregarPromocion() throws DAOException {
         setTitle("Agregar Promoción a Curso");
-        setSize(400, 250);
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 2, 10, 10));
-
+        setLayout(new GridLayout(4, 2, 10, 10));
 
         cursoService = new CursoService();
         promocionService = new PromocionService();
@@ -41,16 +41,24 @@ public class AgregarPromocion extends JFrame {
         cargarPromociones();
         add(comboPromociones);
 
+        btnCrearPromocion = new JButton("Crear Nueva Promoción");
+        add(btnCrearPromocion);
+
         btnAgregar = new JButton("Agregar");
         btnCancelar = new JButton("Cancelar");
         add(btnAgregar);
         add(btnCancelar);
 
+        btnCrearPromocion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PromocionPanel().setVisible(true);
+            }
+        });
 
         btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 Curso cursoSeleccionado = (Curso) comboCursos.getSelectedItem();
                 Promocion promoSeleccionada = (Promocion) comboPromociones.getSelectedItem();
 
@@ -60,7 +68,7 @@ public class AgregarPromocion extends JFrame {
                 }
 
                 try {
-                    System.out.println("id curso " + cursoSeleccionado.getId() + "promocion " + promoSeleccionada.getId());
+                    System.out.println("id curso " + cursoSeleccionado.getId() + " promocion " + promoSeleccionada.getId());
                     boolean tienePromocion = cursoService.recuperarPromocionCurso(cursoSeleccionado.getId());
 
                     if (tienePromocion) {

@@ -15,7 +15,9 @@ public class PromocionService {
         promocionDAO = new PromocionDAO();
     }
 
-
+    public void guardarPromocion(Promocion promocion) throws DAOException {
+        promocionDAO.guardarPromocion(promocion);
+    }
     public List<Promocion> obtenerTodasLasPromociones() throws DAOException {
         return promocionDAO.obtenerTodasLasPromociones();
     }

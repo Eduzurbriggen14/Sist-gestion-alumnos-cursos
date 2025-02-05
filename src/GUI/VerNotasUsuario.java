@@ -3,7 +3,6 @@ package GUI;
 import DAO.AlumnoDAO;
 import DAO.CursoDAO;
 import DAO.InscripcionDAO;
-import DAO.UsuarioCursoCalificacionDAO;
 import Entidades.*;
 import Service.*;
 
