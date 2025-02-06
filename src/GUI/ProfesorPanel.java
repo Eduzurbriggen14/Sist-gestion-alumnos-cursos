@@ -39,21 +39,21 @@ public class ProfesorPanel extends JFrame {
 
         // Botón para inscribir alumno
         inscribirAlumno = new JButton("Inscribir Alumno");
-        inscribirAlumno.setBounds(10, 20, 150, 25);
+        inscribirAlumno.setBounds(10, 20, 200, 25);
         panel.add(inscribirAlumno);
 
         // Botón para ver notas por curso
         verNotasCurso = new JButton("Ver Notas por Curso");
-        verNotasCurso.setBounds(10, 50, 150, 25);
+        verNotasCurso.setBounds(10, 50, 200, 25);
         panel.add(verNotasCurso);
 
         // Botón para editar los datos del profesor
         editarMisDatos = new JButton("Editar Mis Datos");
-        editarMisDatos.setBounds(10, 80, 150, 25);
+        editarMisDatos.setBounds(10, 80, 200, 25);
         panel.add(editarMisDatos);
 
-        notas = new JButton("Agregar notas aumnos");
-        notas.setBounds(10,110,150,25);
+        notas = new JButton("Agregar notas alumnos");
+        notas.setBounds(10,110,200,25);
         panel.add(notas);
 
         // Acción para el botón "Inscribir Alumno"

@@ -24,16 +24,21 @@ public class PromocionDAO implements IPromocionDAO {
 
     @Override
     public void guardarPromocion(Promocion promocion) throws DAOException {
-        String sql = "INSERT INTO promocion (nombre_promocion, descripcion, descuento) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO promocion (nombre_promocion, descripcion, descuento, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?);";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, promocion.getNombrePromocion());
             ps.setString(2, promocion.getDescripcionPromocion());
             ps.setDouble(3, promocion.getDescuentoPorPromocion());
+            ps.setDate(4, Date.valueOf(promocion.getFechaInicio()));
+            ps.setDate(5, Date.valueOf(promocion.getFechaFin()));
 
-            ps.executeUpdate();
-            System.out.println("Promoción guardada correctamente");
-
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Promoción guardada correctamente");
+            } else {
+                System.out.println("No se insertaron filas en la base de datos.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al guardar la promoción", e);
@@ -52,11 +57,12 @@ public class PromocionDAO implements IPromocionDAO {
                 Promocion promocion = new Promocion(
                         rs.getString("nombre_promocion"),
                         rs.getString("descripcion"),
-                        rs.getDouble("descuento")
+                        rs.getDouble("descuento"),
+                        rs.getDate("fecha_inicio").toLocalDate(),
+                        rs.getDate("fecha_fin").toLocalDate()
                 );
                 promocion.setId(rs.getInt("id"));
                 promociones.add(promocion);
-                System.out.println("Promoción: " + promocion);
             }
 
         } catch (SQLException e) {
@@ -92,11 +98,14 @@ public class PromocionDAO implements IPromocionDAO {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    promocion = new Promocion();
+                    promocion = new Promocion(
+                            rs.getString("nombre_promocion"),
+                            rs.getString("descripcion"),
+                            rs.getDouble("descuento"),
+                            rs.getDate("fecha_inicio").toLocalDate(),
+                            rs.getDate("fecha_fin").toLocalDate()
+                    );
                     promocion.setId(rs.getInt("id"));
-                    promocion.setNombrePromocion(rs.getString("nombre_promocion"));
-                    promocion.setDescripcionPromocion(rs.getString("descripcion"));
-                    promocion.setDescuentoPorPromocion(rs.getDouble("descuento"));
                 }
             }
         } catch (SQLException e) {

@@ -2,8 +2,6 @@ package Service;
 
 import DAO.DAOException;
 import DAO.PromocionDAO;
-import DAO.interfaces.IAdministradorDAO;
-import DAO.interfaces.IPromocionDAO;
 import Entidades.Promocion;
 
 import java.util.List;

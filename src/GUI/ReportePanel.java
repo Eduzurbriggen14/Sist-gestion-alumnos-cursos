@@ -7,6 +7,7 @@ import Service.PromocionService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -52,18 +53,25 @@ public class ReportePanel extends JPanel {
                 totalCursoRecaudado = 0;
             }
 
-            // Solo agregar filas si hay inscripciones
             double precioPorAlumno;
+            LocalDate fechaActual = LocalDate.now();
             if (alumno != null) {
                 if (tieneAbono){
                     precioPorAlumno = 0.0;
                 }
                 else{
                     if (promo != null){
-                        double descuento = promo.getDescuentoPorPromocion();
-                        precioPorAlumno = precioCurso * (1 - descuento / 100);
+                        LocalDate fechaInicio = promo.getFechaInicio();
+                        LocalDate fechaFin = promo.getFechaFin();
+                        if ((fechaActual.isEqual(fechaInicio) || fechaActual.isAfter(fechaInicio)) &&
+                                (fechaActual.isEqual(fechaFin) || fechaActual.isBefore(fechaFin))) {
 
-                    }else{
+                            double descuento = promo.getDescuentoPorPromocion();
+                            precioPorAlumno = precioCurso * (1 - descuento / 100);
+                        } else {
+                            precioPorAlumno = precioCurso;
+                        }
+                    } else {
                         precioPorAlumno = precioCurso;
                     }
                 }
