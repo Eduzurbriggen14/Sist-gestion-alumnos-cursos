@@ -134,6 +134,7 @@ public class InscripcionPanel extends JFrame {
                     for (Inscripcion inscripcion : inscripciones) {
                         report.append("Curso: ").append(inscripcion.getNombreCurso())
                                 .append(" - Año: ").append(inscripcion.getAnio())
+                                .append(" - estado: ").append(inscripcion.isEstadoInscripcion())
                                 .append("\n");
                     }
                     JOptionPane.showMessageDialog(panel, report.toString());
@@ -176,6 +177,7 @@ public class InscripcionPanel extends JFrame {
                     for (Inscripcion inscripcion : inscripciones) {
                         report.append("Alumno: ").append(inscripcion.getNombreUsuario())
                                 .append(" - Año: ").append(inscripcion.getAnio())
+                                .append(" - estado: ").append(inscripcion.isEstadoInscripcion())
                                 .append("\n");
                     }
                     JOptionPane.showMessageDialog(panel, report.toString());

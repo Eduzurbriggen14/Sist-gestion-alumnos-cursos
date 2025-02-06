@@ -1,7 +1,6 @@
 import DAO.DAOException;
 import DB.DBConfig;
 
-import Entidades.Curso;
 import GUI.*;
 
 public class Main {

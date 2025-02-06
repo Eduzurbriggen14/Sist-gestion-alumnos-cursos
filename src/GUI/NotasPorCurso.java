@@ -79,7 +79,7 @@ public class NotasPorCurso extends JFrame {
         JPanel panelBoton = new JPanel();
         panelBoton.add(btnVolver);
 
-        JScrollPane scrollPane = new JScrollPane(panelPrincipal); // Se envuelve el panelPrincipal en un JScrollPane
+        JScrollPane scrollPane = new JScrollPane(panelPrincipal);
         scrollPane.setPreferredSize(new Dimension(750, 400));
         // Añadir el panel principal
         add(panelCombo, BorderLayout.NORTH);
@@ -111,10 +111,8 @@ public class NotasPorCurso extends JFrame {
         labelCurso.setFont(new Font("Arial", Font.BOLD, 16));
         panelPrincipal.add(labelCurso);
 
-        // Para mantener el conteo de las condiciones de los alumnos
         double cantAprobados = 0, cantDesaprobados = 0, cantRecuperatorio = 0, cantCursando = 0;
         int id_inscripcion = -1;
-        // Para cada alumno inscrito en el curso
         for (Inscripcion insc : inscripcionesPorCurso) {
             String nombreUsuario = insc.getNombreUsuario();
             Inscripcion inscId = inscripcionDAO.obtener(nombreUsuario, nombreCurso);
@@ -128,7 +126,6 @@ public class NotasPorCurso extends JFrame {
             CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
             List<CalificacionInscripcion> calificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscripcion);
 
-            // Ordenar las calificaciones
             List<CalificacionInscripcion> notasOrdenadas = new ArrayList<>(calificaciones);
             notasOrdenadas.sort((c1, c2) -> {
                 if (c1.getTipo().equals("nota1")) return -1;
@@ -142,7 +139,6 @@ public class NotasPorCurso extends JFrame {
             int contadorNotas = notasOrdenadas.size(); // Corregido: contar notas totales
             double nota1 = 0, nota2 = 0, recuperatorio = 0;
 
-            // Primero asignar las notas
             for (CalificacionInscripcion calificacion : notasOrdenadas) {
                 System.out.println(calificacion);
                 String tipo = String.valueOf(calificacion.getTipo());

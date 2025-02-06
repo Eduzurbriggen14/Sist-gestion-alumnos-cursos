@@ -61,6 +61,7 @@ public class InscripcionService {
 
         int inscripcionesAnioActual = (int) inscripciones.stream()
                 .filter(inscripcion -> inscripcion.getAnio() == anioActual)
+                .filter(Inscripcion::isEstadoInscripcion)
                 .count();
 
         if (inscripcionesAnioActual >= alumno.getLimiteCursos()) {

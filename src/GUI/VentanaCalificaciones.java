@@ -1,6 +1,7 @@
 package GUI;
 
 import DAO.InscripcionDAO;
+import Entidades.CalificacionInscripcion;
 import Entidades.Inscripcion;
 import Service.CalificacionInscripcionService;
 
@@ -9,8 +10,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.util.Comparator;
 import java.util.Date;
-
+import java.util.List;
 public class VentanaCalificaciones extends JFrame {
 
     private JComboBox<String> comboTipoCalificacion;
@@ -69,7 +71,7 @@ public class VentanaCalificaciones extends JFrame {
     }
 
     private void guardarCalificacion() {
-        // Obtener datos de los campos
+        int cantMaxDeNotas = 3;
         String tipo = (String) comboTipoCalificacion.getSelectedItem();
         double valorNota = (double) spinnerValorNota.getValue();
         Date fecha = (Date) spinnerFecha.getValue();
@@ -78,19 +80,51 @@ public class VentanaCalificaciones extends JFrame {
         InscripcionDAO inscripcionDAO = new InscripcionDAO();
         Inscripcion insc = inscripcionDAO.obtener(nombreUsuario, nombreCurso);
 
-        int id_inscriopcion = insc.getId();
-        System.out.println("id inscripcion -----"+ id_inscriopcion);
+        int id_inscripcion = insc.getId();
+        System.out.println("id inscripcion -----"+ id_inscripcion);
 
         CalificacionInscripcionService calificacionInscripcionService = new CalificacionInscripcionService();
-        boolean res = calificacionInscripcionService.agregarCalificacion(id_inscriopcion,valorNota, fechaSql, tipo);
+        List<CalificacionInscripcion> listaCalificaciones = calificacionInscripcionService.obtenerCalificacionesPorInscripcion(id_inscripcion);
 
-        System.out.println("Guardando calificación...");
-        System.out.println("Alumno ID: " + idAlumno);
-        System.out.println("Tipo: " + tipo);
-        System.out.println("Nota: " + valorNota);
-        System.out.println("Fecha: " + fecha);
+        int tamanio = listaCalificaciones.size();
 
-        JOptionPane.showMessageDialog(this, "Calificación guardada con éxito.");
-        dispose(); // Cierra la ventana
+        if (tamanio < cantMaxDeNotas) {
+            // Ordenar calificaciones de menor a mayor (según fecha)
+            listaCalificaciones.sort(Comparator.comparing(CalificacionInscripcion::getFecha));
+
+            // Verificar si hay al menos dos calificaciones
+            if (tamanio >= 2) {
+                double nota1 = listaCalificaciones.get(0).getValorNota();
+                double nota2 = listaCalificaciones.get(1).getValorNota();
+
+                // Si ambas notas son mayores o iguales a 4, no se permite otra nota
+                if ((nota1 >= 4 && nota2 >= 4) || (nota1 < 4 && nota2 < 4)) {
+                    double promedio = (nota1 + nota2)/2;
+                    if (promedio >=6){
+                        JOptionPane.showMessageDialog(this, "alumno ya se encuentra aprobado.");
+                        return;
+                    }
+                    JOptionPane.showMessageDialog(this, "alumno ya se encuentra desaprobado.");
+                    return;
+
+                }
+            }
+
+            // Agregar la nueva calificación si no se cumplió ninguna restricción
+            boolean res = calificacionInscripcionService.agregarCalificacion(id_inscripcion, valorNota, fechaSql, tipo);
+            System.out.println("Guardando calificación...");
+            System.out.println("Alumno ID: " + idAlumno);
+            System.out.println("Tipo: " + tipo);
+            System.out.println("Nota: " + valorNota);
+            System.out.println("Fecha: " + fecha);
+
+            JOptionPane.showMessageDialog(this, "Calificación guardada con éxito.");
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "El alumno ya tiene 3 calificaciones registradas.");
+        }
+
+
+
     }
 }
